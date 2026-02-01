@@ -1,6 +1,6 @@
 # Embedded Smart Wallet
 
-This template shows how to use an [embedded wallet](https://portal.thirdweb.com/embedded-wallet) as the personal wallet for a [smart wallet](https://portal.thirdweb.com/smart-wallet).
+This template shows how to use the [thirdweb embedded wallet](https://portal.thirdweb.com/embedded-wallet) as the personal wallet for a [smart wallet](https://portal.thirdweb.com/wallets).
 This means that users will log in with their email or social account and then access a smart wallet and execute gasless transactions. This provides a truly seamless UX.
 
 ## Getting Started
