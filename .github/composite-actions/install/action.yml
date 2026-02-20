@@ -1,14 +1,20 @@
-name: "Install"
+name: "Setup Node and PNPM dependencies"
 description: "Sets up Node.js and runs install"
 
 runs:
-  using: composite
+  using: 'composite'
+
   steps:
-    # we use bun for some test suites
-    - name: Setup bun
-      uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+    - name: Setup Node
+      uses: actions/setup-node@v4
       with:
-        bun-version: 1.0.35
+        node-version: 20
+
+    - name: Setup PNPM
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+        run_install: false
     # pnpm for our dependencies
     - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       with:
@@ -29,3 +35,23 @@ runs:
       run: pnpm install
       env:
         PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --no-frozen-lockfile
+      if: ${{ steps.pnpm-cache.outputs.cache-hit != 'true' }}
