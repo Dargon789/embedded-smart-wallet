@@ -1,0 +1,112 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "globalEnv": ["CI", "TW_SECRET_KEY"],
+  "tasks": {
+    "bench": {
+      "cache": false,
+      "dependsOn": []
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "e2e": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "fixtures/**"],
+      "outputs": []
+    },
+    "e2e:legacy": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "fixtures/**"],
+      "outputs": []
+    },
+    "fix": {
+      "cache": false,
+      "outputs": []
+    },
+    "format": {
+      "cache": false
+    },
+    "lint": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint:legacy": {
+      "cache": false,
+      "outputs": []
+    },
+    "playground-web#build": {
+      "dependsOn": ["^build"],
+      "env": ["ENGINE_ACCESS_TOKEN", "ENGINE_BACKEND_WALLET", "ENGINE_URL"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "portal#build": {
+      "dependsOn": ["^build", "thirdweb#typedoc"],
+      "outputs": [".next/**", "!.next/cache/**", "searchIndex.json"]
+    },
+    "portal#dev": {
+      "dependsOn": ["^build", "thirdweb#typedoc"]
+    },
+    "storybook": {
+      "inputs": ["$TURBO_DEFAULT$", "src/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "test/**"],
+      "outputs": ["coverage/**"]
+    },
+    "test:legacy": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "test/**"],
+      "outputs": ["coverage/**"]
+    },
+    "thirdweb-dashboard#build": {
+      "dependsOn": ["^build"],
+      "env": [
+        "SENTRY_AUTH_TOKEN",
+        "BEEHIIV_API_KEY",
+        "API_ROUTES_CLIENT_ID",
+        "DASHBOARD_SECRET_KEY",
+        "SIMPLEHASH_API_KEY",
+        "THIRDWEB_ENGINE_URL",
+        "THIRDWEB_ACCESS_TOKEN",
+        "THIRDWEB_ENGINE_ACCESS_TOKEN",
+        "THIRDWEB_ENGINE_WALLET",
+        "REDIS_URL",
+        "ANALYTICS_SERVICE_URL",
+        "DISABLE_FAUCET_CHAIN_IDS",
+        "API_SERVER_SECRET",
+        "TURNSTILE_SECRET_KEY",
+        "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
+        "NEXT_PUBLIC_THIRDWEB_ENGINE_FAUCET_WALLET",
+        "NEXT_PUBLIC_NEBULA_URL",
+        "INSIGHT_SERVICE_API_KEY",
+        "STRIPE_SECRET_KEY"
+      ],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "thirdweb-dashboard#dev": {
+      "dependsOn": ["^build"]
+    },
+    "update-version": {
+      "inputs": ["$TURBO_DEFAULT$", "package.json"],
+      "outputs": ["src/version.ts"]
+    },
+    "typedoc": {
+      "dependsOn": ["^build"],
+      "outputs": ["typedoc/**"]
+    },
+    "wallet-ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    }
+  }
+}

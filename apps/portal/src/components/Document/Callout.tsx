@@ -1,0 +1,50 @@
+import { AlertCircleIcon, AlertTriangleIcon, InfoIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export function Callout(props: {
+  children: React.ReactNode;
+  variant: "danger" | "warning" | "info";
+  disableIcon?: boolean;
+  title?: string;
+}) {
+  return (
+    <div
+      className={cn("my-5 flex flex-col gap-1 rounded-lg border bg-card p-4")}
+      role="alert"
+    >
+      {/* Icon + title */}
+      {props.title && (
+        <div
+          className={cn(
+            "flex items-center gap-2",
+            props.variant === "danger" && "text-destructive-text",
+            props.variant === "warning" && "text-warning-text",
+            props.variant === "info" && "text-link-foreground",
+          )}
+        >
+          {!props.disableIcon && (
+            <>
+              {props.variant === "danger" && (
+                <AlertTriangleIcon className="size-5 shrink-0" />
+              )}
+
+              {props.variant === "warning" && (
+                <AlertCircleIcon className="size-5 shrink-0 " />
+              )}
+
+              {props.variant === "info" && (
+                <InfoIcon className="size-5 shrink-0" />
+              )}
+            </>
+          )}
+
+          <h3 className="font-semibold text-base">{props.title}</h3>
+        </div>
+      )}
+
+      <div className="gap-2 pl-7 [&_*:first-child]:mt-0 [&_*:last-child]:mb-0">
+        {props.children}
+      </div>
+    </div>
+  );
+}

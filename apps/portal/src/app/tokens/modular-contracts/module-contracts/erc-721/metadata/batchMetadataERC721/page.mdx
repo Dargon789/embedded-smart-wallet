@@ -1,0 +1,50 @@
+import { createMetadata, GithubButtonLink } from "@doc";
+
+export const metadata = createMetadata({
+    title: "thirdweb Modular Contracts",
+    description: 
+        "Modular Contract provides a framework to build custom smart contracts more efficiently by offering a set of pre-built base contracts and reusable components, better known as modules.",
+    image: {
+        title: "thirdweb Modular Contracts",
+        icon: "solidity",
+    },
+});
+
+# BatchMetadataERC721
+
+## Description
+
+The `BatchMetadataERC721` contract is a module that provides batch metadata management for ERC-721 tokens. It includes functionalities for uploading, updating, and retrieving metadata in batches efficiently. This contract helps manage metadata for large collections of tokens by organizing them in batches.
+
+<GithubButtonLink href="https://github.com/thirdweb-dev/modular-contracts/blob/dev/src/module/token/metadata/BatchMetadataERC721.sol" />
+
+## Callback Functions
+
+| Function                   | Description                                                                                |
+|----------------------------|--------------------------------------------------------------------------------------------|
+| `onTokenURI`               | Callback function that returns the token URI for ERC-721 tokens.                           |
+| `updateMetadataERC721`     | Callback function that updates metadata for a batch of ERC-721 tokens.                     |
+
+## Fallback Functions
+
+| Function                     | Description                                                                               |
+|------------------------------|-------------------------------------------------------------------------------------------|
+| `uploadMetadata`             | Allows uploading of metadata. Requires minter role.                                       |
+| `setBaseURI`                 | Sets the base URI for the token metadata. Requires manager role.                          |
+| `getAllMetadataBatches`      | Retrieves all metadata batches uploaded so far.                                           |
+| `nextTokenIdToMint`          | Returns the next token ID to be minted.                                                   |
+| `getBatchId`                 | Returns the batch ID for a specific token ID.                                              |
+| `getBatchRange`              | Returns the range of token IDs for a specific metadata batch.                             |
+
+## Required Interfaces
+
+| Interface  | ID          |
+|------------|-------------|
+| `ERC-721`  | `0x80ac58cd`|
+
+## Supported Interfaces
+
+| Interface  | ID          |
+|------------|-------------|
+| `ERC4906`  | `0x49064906`|
+

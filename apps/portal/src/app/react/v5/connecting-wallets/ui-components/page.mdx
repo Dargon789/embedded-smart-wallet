@@ -1,0 +1,118 @@
+import { ArticleIconCard, createMetadata, DocImage, Stack } from "@doc";
+import ConnectWalletHeroImage from "../../components/ConnectButton/images/connect-wallet-hero.webp";
+import { ComponentIcon, Wallet } from "lucide-react";
+import { ReactIcon, TypeScriptIcon } from "@/icons";
+
+export const metadata = createMetadata({
+	image: {
+		title: "Connecting Wallets",
+		icon: "react",
+	},
+	title: "Connecting Wallets in thirdweb React SDK",
+	description:
+		"Connect wallets using ConnectButton, ConnectEmbed or useConnect hook",
+});
+
+# UI Components
+
+You can use [`ConnectButton`](/react/v5/ConnectButton) or [`ConnectEmbed`](/react/v5/ConnectEmbed) component for a quick, easy and customizable UI.
+
+These components provide a prebuilt UI for connecting various wallets and take care of a lot of wallet-specific edge cases - so you can focus on building your app.
+
+```tsx
+import { createThirdwebClient } from "thirdweb";
+import { ThirdwebProvider, ConnectButton } from "thirdweb/react";
+
+const client = createThirdwebClient({ clientId });
+
+export default function App() {
+  return (
+    <ThirdwebProvider>
+      <ConnectButton client={client} />
+    </ThirdwebProvider>
+  );
+}
+```
+
+These components support over 500+ wallets, including support in-app wallets and account abstraction.
+
+It also automatically shows all installed `EIP-6963` compliant wallet extensions installed by the user.
+
+## Creating Wallets
+
+You can create any wallet by id with auto completion using the [`createWallet`](/references/typescript/v5/createWallet) function. Or use one of the first party wallets like [`inAppWallet`](/references/typescript/v5/inAppWallet) or [`ecosystemWallet`](/references/typescript/v5/ecosystemWallet).
+
+<Stack>
+<ArticleIconCard
+	title="inAppWallet"
+	icon={TypeScriptIcon}
+	href="/references/typescript/v5/inAppWallet"
+	description="Create an in app wallet"
+/>
+
+<ArticleIconCard
+	title="ecosystemWallet"
+	icon={TypeScriptIcon}
+	href="/references/typescript/v5/ecosystemWallet"
+	description="Create an ecosystem wallet"
+/>
+
+<ArticleIconCard
+	title="createWallet"
+	icon={TypeScriptIcon}
+	href="/references/typescript/v5/createWallet"
+	description="Create any external wallet by id with auto completion"
+/>
+</Stack>
+
+## React Components
+
+<Stack>
+
+<ArticleIconCard
+	title="ThirdwebProvider"
+	icon={ReactIcon}
+	href="/references/typescript/v5/ThirdwebProvider"
+	description="Provider for the maintaining wallet state"
+/>
+
+<ArticleIconCard
+	title="ConnectButton"
+	icon={ReactIcon}
+	href="/references/typescript/v5/ConnectButton"
+	description="All in one button with connected state"
+/>
+
+<ArticleIconCard
+	title="ConnectEmbed"
+	icon={ReactIcon}
+	href="/references/typescript/v5/ConnectEmbed"
+	description="Standalone connect component"
+/>
+
+<ArticleIconCard
+	title="AutoConnect"
+	icon={ReactIcon}
+	href="/references/typescript/v5/AutoConnect"
+	description="Automatically connect to the wallet that the user last connected"
+/>
+
+</Stack>
+
+The SDK supports 500+ wallets out of the box, all you need to pass is their id.
+
+<Stack>
+
+<ArticleIconCard
+	title="Supported Wallets"
+	icon={ComponentIcon}
+	href="/wallets/external-wallets"
+	description="See all 500+ wallets supported by the TypeScript SDK"
+/>
+
+</Stack>
+
+## Post Connection
+
+Once the wallet is connected, you can use the [Connection hooks](/react/v5/connecting-wallets/hooks) to get information about the connected wallet like getting the address, account, etc
+

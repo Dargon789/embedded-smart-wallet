@@ -1,0 +1,53 @@
+import { ExternalLink } from "lucide-react";
+import { ArticleIconCard, Stack } from "@doc";
+import { ReactIcon } from "@/icons";
+import { createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Transact from any chain or token | thirdweb",
+	description: "Let users transact from any chain or token",
+});
+
+# Chain Abstraction
+
+Facilitate transactions by letting users pay with any token from any chain, or with fiat.
+
+<Stack>
+
+<ArticleIconCard
+	title="Try the demo"
+	icon={ExternalLink}
+	href="https://playground.thirdweb.com/bridge/transaction-widget"
+	description="See the SDK in action on the live playground"
+/>
+</Stack>
+
+## Usage with regular transactions
+
+Any transaction sent with `useSendTransaction` or with `TransactionButton` will prompt the user to choose a different payment method if they don't have enough balance for the transaction.
+
+You can turn off this behaviour by setting the `payModal` option to `false`.
+
+## Usage with TransactionWidget
+
+The `TransactionWidget` component provides a complete UI for executing transactions with built-in cross-chain payment support.
+
+```tsx
+import { TransactionWidget } from "thirdweb/react";
+import { prepareContractCall } from "thirdweb";
+
+function MyComponent() {
+  return (
+    <TransactionWidget
+      client={client}
+      transaction={prepareContractCall({
+        contract: myContract,
+        method: "function mint(uint256 quantity)",
+        params: [1n],
+      })}
+      amount="0.1"
+      title="Mint NFT"
+    />
+  );
+}
+```

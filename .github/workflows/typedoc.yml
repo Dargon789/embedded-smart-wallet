@@ -1,0 +1,30 @@
+name: TypeDoc
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "typedoc"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Generate TypeDoc"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        
+      - name: Install
+        uses: ./.github/composite-actions/install
+
+      - name: Run TypeDoc
+        run: pnpm typedoc
