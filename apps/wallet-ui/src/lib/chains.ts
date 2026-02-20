@@ -30,7 +30,7 @@ function sanitizeChainIdOrSlug(input: string): string {
 export async function getChain(chainIdOrSlug: string): Promise<ChainMetadata> {
   const safeChainIdOrSlug = sanitizeChainIdOrSlug(chainIdOrSlug);
   const res = await fetch(
-    `https://api.thirdweb.com/v1/chains/${encodeURIComponent(safeChainIdOrSlug)}`,
+    `https://api.thirdweb.com/v1/chains/${safeChainIdOrSlug}`,
     // revalidate every 15 minutes
     { next: { revalidate: 15 * 60 } },
   );
