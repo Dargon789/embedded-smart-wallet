@@ -1,0 +1,59 @@
+html {
+  font-feature-settings: "liga" 1;
+}
+
+code span {
+  color: var(--code-light-color);
+}
+
+.dark code span {
+  color: var(--code-dark-color);
+}
+
+.shiki,
+.shiki span {
+  background-color: transparent !important;
+}
+
+.styled-scrollbar::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+@media (max-width: 640px) {
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 0.5rem;
+  transition: color 200ms ease;
+  background: var(--border);
+}
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}
+.styled-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.dark .light-only {
+  display: none;
+}
+
+html:not(.dark) .dark-only {
+  display: none;
+}

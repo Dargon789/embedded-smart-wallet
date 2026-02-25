@@ -1,0 +1,23 @@
+# Order is important; the last matching pattern takes the most precedence.
+
+# default ownership group
+@thirdweb-dev/developer-tools
+
+# packages
+packages/thirdweb/ @thirdweb-dev/core-platform @thirdweb-dev/developer-tools
+
+## specific thirdweb pieces
+packages/service-utils/ @thirdweb-dev/core-platform
+packages/eslint-config-thirdweb/ @thirdweb-dev/core-platform @edwardysun
+packages/tw-tsconfig/ @thirdweb-dev/core-platform @edwardysun
+
+# apps
+apps/ @thirdweb-dev/developer-tools @thirdweb-dev/core-platform
+
+# .github folder + .changeset + turbo config is owned by jonas for now
+scripts/ @jnsdls @joaquim-verges
+.github/ @jnsdls @joaquim-verges
+.changeset/config.json @jnsdls @joaquim-verges
+turbo.json @jnsdls @joaquim-verges
+.vscode/ @jnsdls @joaquim-verges
+

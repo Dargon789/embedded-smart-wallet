@@ -1,0 +1,179 @@
+[
+  {
+    "id": "com.lootrush",
+    "name": "LootRush",
+    "homepage": "https://www.lootrush.com/lootrush-wallet",
+    "image_id": "lootrush.svg",
+    "order": 9999999,
+    "app": {
+      "browser": null,
+      "ios": null,
+      "android": null,
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": "https://chrome.google.com/webstore/detail/lootrush-wallet/lfmmjkfllhmfmkcobchabopkcefjkoip",
+      "firefox": "https://addons.mozilla.org/en-US/firefox/addon/lootrush-wallet/",
+      "safari": null,
+      "edge": null,
+      "opera": null
+    },
+    "injected": [],
+    "rdns": "com.lootrush",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  },
+  {
+    "id": "app.core.extension",
+    "name": "Core",
+    "homepage": "https://core.app/?utm_source=referral&utm_medium=website&utm_campaign=walletconnect",
+    "image_id": "core.svg",
+    "order": 9999999,
+    "app": {
+      "browser": null,
+      "ios": "https://apps.apple.com/us/app/core-crypto-wallet-nfts/id6443685999",
+      "android": "https://play.google.com/store/apps/details?id=com.avaxwallet&hl=en_US&gl=US",
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": "https://chrome.google.com/webstore/detail/core-crypto-wallet-nft-ex/agoakfejjabomempkjlepdflaleeobhb",
+      "firefox": null,
+      "safari": null,
+      "edge": null,
+      "opera": null
+    },
+    "injected": [
+      {
+        "injected_id": "isAvalanche",
+        "namespace": "eip155"
+      }
+    ],
+    "rdns": "app.core.extension",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  },
+  {
+    "id": "xyz.dawnwallet",
+    "name": "Dawn Wallet",
+    "homepage": "https://www.dawnwallet.xyz",
+    "image_id": "dawn.svg",
+    "app": {
+      "browser": null,
+      "ios": "https://apps.apple.com/us/app/dawn-ethereum-wallet/id1673143782",
+      "android": null,
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": null,
+      "firefox": null,
+      "safari": "https://apps.apple.com/us/app/dawn-ethereum-wallet/id1673143782",
+      "edge": null,
+      "opera": null
+    },
+    "rdns": "xyz.dawnwallet",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  },
+  {
+    "id": "abstract",
+    "name": "Abstract Global Wallet",
+    "homepage": "https://abs.xyz/",
+    "image_id": "abstract.png",
+    "app": {
+      "browser": null,
+      "ios": null,
+      "android": null,
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": null,
+      "firefox": null,
+      "safari": null,
+      "edge": null,
+      "opera": null
+    },
+    "rdns": "xyz.abs",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  },
+  {
+    "id": "frame",
+    "name": "Frame Wallet",
+    "homepage": "https://frame.sh/",
+    "image_id": "frame.png",
+    "app": {
+      "browser": null,
+      "ios": null,
+      "android": null,
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": null,
+      "firefox": null,
+      "safari": null,
+      "edge": null,
+      "opera": null
+    },
+    "rdns": "sh.frame",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  },
+  {
+    "id": "use-glyph",
+    "name": "Glyph Wallet",
+    "homepage": "https://useglyph.io/",
+    "image_id": "glyph.png",
+    "app": {
+      "browser": null,
+      "ios": null,
+      "android": null,
+      "mac": null,
+      "windows": null,
+      "linux": null,
+      "chrome": null,
+      "firefox": null,
+      "safari": null,
+      "edge": null,
+      "opera": null
+    },
+    "rdns": "io.useglyph",
+    "mobile": {
+      "native": null,
+      "universal": null
+    },
+    "desktop": {
+      "native": null,
+      "universal": null
+    }
+  }
+]
