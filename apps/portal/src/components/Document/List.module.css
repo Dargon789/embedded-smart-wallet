@@ -1,0 +1,20 @@
+.unorderedList,
+.orderedList {
+  @apply pl-5 leading-7 list-none mb-6;
+}
+
+.unorderedList > li {
+  @apply my-1.5 pl-2 list-disc;
+}
+
+.orderedList > li {
+  @apply my-1.5 pl-2 list-decimal;
+}
+
+.unorderedList > li::marker {
+  @apply !m-0 text-left;
+}
+
+.orderedList > li::marker {
+  @apply text-left;
+}

@@ -1,0 +1,126 @@
+import { Details, createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Contracts | thirdweb Engine",
+	description:
+		"Call or deploy contracts from your backend wallet to any EVM blockchain with one API call.",
+});
+
+# Contracts
+
+Call or deploy contracts from your backend wallet to any EVM blockchain with one API call.
+
+## Write to a contract
+
+> This request requires gas funds in the backend wallet.
+
+```ts
+const resp = await fetch(
+	"<engine_url>/contract/<chain>/<contract_address>/write",
+	{
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: "Bearer <access_token>",
+			"x-backend-wallet-address": "<backend_wallet_address>",
+		},
+		body: JSON.stringify({
+			functionName: "transferFrom",
+			args: [
+				"0x1946267d81Fb8aDeeEa28e6B98bcD446c8248473",
+				"0x3EcDBF3B911d0e9052b64850693888b008e18373",
+				"0",
+			],
+		}),
+	},
+);
+
+const { result } = await resp.json();
+// queueId is a reference to the transaction queued by Engine.
+console.log("Queue ID:", result.queueId);
+```
+
+<Details id="handling-overloaded-functions" summary="Handling overloaded functions">
+
+If there are multiple signatures for `functionName` on the contract, provide the full signature with args.
+
+**Example**
+
+Your contract has two functions named `mintTo`:
+
+```solidity
+function mintTo(address to) public
+```
+
+```solidity
+function mintTo(address to, uint256 quantity) public
+```
+
+This is the request body to call the second function:
+
+```json
+{
+	"functionName": "mintTo(address, uint256)",
+	"args": ["0x4Ff9aa707AE1eAeb40E581DF2cf4e14AffcC553d", "3"]
+}
+```
+
+</Details>
+
+[See API reference](https://thirdweb-engine.apidocumentation.com/reference#tag/contract/POST/contract/{chain}/{contractAddress}/write)
+
+### Call a payable method
+
+To send native tokens to a payable method (e.g. ETH on Ethereum), set `txOverrides.value` in the request body to `POST /contract/<chain>/<contract_address>/write`.
+
+```json
+{
+  "functionName": "...",
+  "args": [ ... ],
+  "txOverrides": {
+    "value": "1000000000000000", // 0.001 ETH in wei
+  }
+}
+```
+
+## Read from a contract
+
+```ts
+const resp = await fetch(
+	"<engine_url>/contract/<chain>/<contract_address>/read?functionName=balanceOf&args=0x3EcDBF3B911d0e9052b64850693888b008e18373",
+	{
+		headers: {
+			Authorization: "Bearer <access_token>",
+		},
+	},
+);
+
+const { result } = await resp.json();
+console.log("ERC-20 balance:", result);
+```
+
+## Deploy a contract
+
+> This request requires gas funds in the backend wallet.
+
+```ts
+const resp = await fetch("<engine_url>/deploy/<chain>/prebuilts/nft-drop", {
+	method: "POST",
+	headers: {
+		"Content-Type": "application/json",
+		Authorization: "Bearer <access_token>",
+		"x-backend-wallet-address": "<backend_wallet_address>",
+	},
+	body: JSON.stringify({
+		contractMetadata: {
+			name: "thirdweb Engine example",
+			symbol: "eng",
+			primary_sale_recipient: "0x3EcDBF3B911d0e9052b64850693888b008e18373",
+		},
+	}),
+});
+
+const { result } = await resp.json();
+// queueId is a reference to the transaction queued by Engine.
+console.log("Queue ID:", result.queueId);
+```
