@@ -12,7 +12,7 @@ permissions:
 
 # Allow only one concurrent deployment
 concurrency:
-  group: "typedoc"
+  group: "TypeDoc"
   cancel-in-progress: true
 
 jobs:
@@ -27,4 +27,4 @@ jobs:
         uses: ./.github/composite-actions/install
 
       - name: Run TypeDoc
-        run: pnpm typedoc
+        run: pnpm TypeDoc
