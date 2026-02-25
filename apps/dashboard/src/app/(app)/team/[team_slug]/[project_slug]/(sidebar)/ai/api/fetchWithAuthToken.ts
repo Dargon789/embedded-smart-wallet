@@ -2,6 +2,7 @@
 
 import { getAuthToken } from "@/api/auth-token";
 import type { Project } from "@/api/project/projects";
+import { NEXT_PUBLIC_THIRDWEB_AI_HOST } from "@/constants/public-envs";
 
 type FetchWithKeyOptions = {
   endpoint: string;
@@ -17,6 +18,8 @@ type FetchWithKeyOptions = {
     }
 );
 
+const ALLOWED_AI_HOST_URL = new URL(NEXT_PUBLIC_THIRDWEB_AI_HOST);
+
 export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
   const timeout = options.timeout || 30000;
 
@@ -28,7 +31,21 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
     if (!authToken) {
       throw new Error("No auth token found");
     }
-    const response = await fetch(options.endpoint, {
+
+    const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
+
+    if (
+      endpointUrl.protocol !== "http:" &&
+      endpointUrl.protocol !== "https:"
+    ) {
+      throw new Error("Invalid endpoint protocol");
+    }
+
+    if (endpointUrl.hostname !== ALLOWED_AI_HOST_URL.hostname) {
+      throw new Error("Endpoint host is not allowed");
+    }
+
+    const response = await fetch(endpointUrl.toString(), {
       body: "body" in options ? JSON.stringify(options.body) : undefined,
       headers: {
         Accept: "application/json",
