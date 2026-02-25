@@ -1,0 +1,350 @@
+import {
+	Tabs,
+	TabsList,
+	TabsTrigger,
+	TabsContent,
+	Callout,
+	DocImage,
+	createMetadata,
+	AuthList,
+	ArticleIconCard,
+	Stack,
+	Steps,
+	Step
+} from "@doc";
+import { ExternalLink } from "lucide-react";
+
+export const metadata = createMetadata({
+	title: "Connect users with In-App Wallet",
+	description:
+		"use the prebuilt connect UI components to authenticate users and connect in-app wallets",
+	image: {
+		title: "Connect users with In-App Wallets",
+		icon: "wallets",
+	},
+});
+
+# In-App Wallets
+
+Create in-app wallet for your users based on their email, phone, passkey, social auth or even their external wallets. These wallets are scoped by your clientId and do not require any confirmation to sign transactions.
+
+## Live Playground
+
+Try out in-app wallets for yourself in the [in-app wallet live playground](https://playground.thirdweb.com/wallets/in-app-wallet)
+
+<Stack>
+
+<ArticleIconCard
+	title="Try the demo"
+	icon={ExternalLink}
+	href="https://playground.thirdweb.com/wallets/in-app-wallet"
+	description="See the SDK in action on the live playground"
+/>
+
+</Stack>
+
+## Configure in-app wallets
+
+The simplest way to create an in-app wallet is to use the `inAppWallet()` function. By default, this will create a wallet that supports email/password login, Google, Apple, Facebook login, and passkey.
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallet = inAppWallet();
+```
+
+You can also customize the wallet by passing in options.
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallet = inAppWallet({
+	auth: {
+        mode, // options are "popup" | "redirect" | "window";
+        options, // ex: ["discord", "farcaster", "apple", "facebook", "google", "passkey"],
+        passkeyDomain, // for passkey, the domain that the passkey is created on
+        redirectUrl, // the URL to redirect to after authentication
+	},
+	metadata, // metadata for the wallet (name, icon, etc.), will show in UI components
+	executionMode, // enable gasless transactions for the wallet
+});
+```
+
+[View all in-app wallet options](/references/typescript/v5/InAppWalletCreationOptions).
+
+Once created, you can use it either with the prebuilt UI components, or with your own UI.
+
+## Usage with Connect UI components
+
+The easiest way to use in-app wallets is using the prebuilt connect UI components like [`ConnectButton`](/references/typescript/v5/ConnectButton) and [`ConnectEmbed`](/references/typescript/v5/ConnectEmbed) to authenticate users and connect their wallets.
+
+By default, the connect UI supports multiple social logins as well as email, phone and passkey authentication. You can customize which authentication methods to support which will be reflected in the UI, as well as the app name, icon and image.
+
+```tsx
+import { ThirdwebProvider, ConnectButton } from "thirdweb/react";
+import { inAppWallet } from "thirdweb/wallets";
+
+const client = createThirdwebClient({ clientId });
+const wallets = [inAppWallet({
+	// available auth methods
+	auth: { options: ["email", "passkey", "google"] },
+	// app metadata
+	metadata: {
+		name: "My App",
+		image: {
+			src: "https://example.com/banner.png",
+			width: 100,
+			height: 100,
+		},
+	},
+	// enable gasless transactions for the wallet
+	executionMode: {
+		mode: "EIP7702",
+		sponsorGas: true,
+	}
+})];
+
+export default function App() {
+	return (
+		<ThirdwebProvider>
+			<ConnectButton client={client} wallets={wallets} />
+		</ThirdwebProvider>
+	);
+}
+```
+
+## Usage with your own UI
+
+You have full control with the connection hooks and functions to build your own UI. Pick an authentication strategy and then connect.
+
+### Setup the ThirdwebProvider
+
+This will ensure that the wallet is available to all components in your app, handle connection states and auto-connection on page load.
+
+```jsx
+import { ThirdwebProvider } from "thirdweb/react";
+
+<ThirdwebProvider>
+	<YourApp />
+</ThirdwebProvider>;
+```
+
+### Configure the wallet
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallet = inAppWallet({
+	// enable gasless transactions for the wallet
+	executionMode: {
+		mode: "EIP7702",
+		sponsorGas: true,
+	},
+});
+```
+
+### Authenticate via Google
+
+Note that for Apple and Facebook, you just need to update the strategy to "facebook" or "apple".
+
+In React and React Native, the `useConnect()` hook handles authentication and connection states.
+
+```tsx
+import { useConnect } from "thirdweb/react";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "google",
+		});
+		return wallet;
+	});
+};
+```
+
+Other social options include Apple, Facebook, Discord, Farcaster and more.
+
+### Authenticate via Email verification
+
+```typescript
+import { useConnect } from "thirdweb/react";
+import { preAuthenticate } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const preLogin = async (email: string) => {
+	// send email verification code
+	await preAuthenticate({
+		client,
+		strategy: "email",
+		email, // ex: user@example.com
+	});
+};
+
+const handleLogin = async (email: string, verificationCode: string) => {
+	// verify email and connect
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "email",
+			email,
+			verificationCode,
+		});
+		return wallet;
+	});
+};
+```
+
+### Authenticate via Phone number verification
+
+```typescript
+import { useConnect } from "thirdweb/react";
+import { preAuthenticate } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const preLogin = async (phoneNumber: string) => {
+	// send phone number verification code
+	await preAuthenticate({
+		client,
+		strategy: "phone",
+		phoneNumber, // ex: +1234567890
+	});
+};
+
+const handleLogin = async (phoneNumber: string, verificationCode: string) => {
+	// verify phone number and connect
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "phone",
+			phoneNumber,
+			verificationCode,
+		});
+		return wallet;
+	});
+};
+```
+
+### Authenticate via Passkey
+
+<Callout variant="info" title="React Native support">
+
+For React Native, `passkeyDomain` is required and must be set to a valid app universal link. To setup universal links for your application, follow the [iOS documentation](https://developer.apple.com/documentation/xcode/supporting-associated-domains) and [Android documentation](https://developer.android.com/identity/sign-in/credential-manager#add-support-dal).
+
+</Callout>
+
+```typescript
+import { useConnect } from "thirdweb/react";
+import { hasStoredPasskey } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		const hasPasskey = await hasStoredPasskey(client);
+		await wallet.connect({
+			client,
+			strategy: "passkey",
+			type: hasPasskey ? "sign-in" : "sign-up",
+		});
+		return wallet;
+	});
+};
+```
+
+### Authenticate with an external wallet
+
+You can also use wallets as an authentication method, when using this method, both external and in-app wallets are connected, and you can switch between the 2 at any time.
+
+```typescript
+import { useConnect } from "thirdweb/react";
+import { sepolia } from "thirdweb/chains";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "wallet",
+			wallet: createWallet("io.metamask"), // or any other wallet
+			chain: sepolia, // required for SIWE
+		});
+		return wallet;
+	});
+};
+```
+
+### Authenticate as Guest
+
+You can also create wallets for your users without any input at all. This will create a session that can be later upgraded by linking another identity. Great for progressive onboarding.
+
+```typescript
+import { useConnect } from "thirdweb/react";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "guest",
+		});
+		return wallet;
+	});
+};
+```
+
+
+## Bring your own auth
+
+From the in-app wallet settings on the thirdweb dashboard, you can enable [custom authentication with your own JWT or auth endpoint](/wallets/users).
+
+### OICD compliant JWT
+
+Pass any OICD compliant JWT, can be used with firebase, auth0, and more.
+
+```typescript
+import { useConnect } from "thirdweb/react";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "jwt",
+			jwt: "your-jwt"
+		});
+		return wallet;
+	});
+};
+```
+
+### Custom Auth endpoint
+
+Fully custom auth endpoint, pass your own payload and configure your auth verification endpoint on the thirdweb dashboard. This approach lets you use virtually any auth method you can imagine.
+
+```typescript
+import { useConnect } from "thirdweb/react";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		await wallet.connect({
+			client,
+			strategy: "auth_endpoint",
+			payload: "your-auth-payload"
+		});
+		return wallet;
+	});
+};
+```
+
+
+

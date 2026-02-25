@@ -1,0 +1,39 @@
+import { DocImage } from "@doc";
+import billingSettings from "../assets/billing-settings.png";
+import invoicesSettings from "../assets/invoices-settings.png";
+
+import { createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Manage billing for thirdweb Account",
+	description:
+		"Update billing information, view past invoices, and view account usage.",
+	image: {
+		title: "Manage billing for thirdweb Account",
+		icon: "thirdweb",
+	},
+});
+
+# Manage Billing
+
+## Update Billing Info
+
+To update your billing information:
+
+1. On your dashboard, navigate to **Settings > Billing > Manage Billing**.
+2. This will redirect you to the Stripe Customer Portal.
+3. In the Stripe Customer Portal, you can:
+   - Update the card used for payments or add a new one.
+   - Update billing information, such as your address.
+   - Save any changes made.
+
+<DocImage src={billingSettings} />
+
+## View Past Invoices
+
+To view your past invoices:
+
+1. On your dashboard, navigate to **Settings > Invoices**
+2. View or download past invoices to see breakdown by plan and usage.
+
+<DocImage src={invoicesSettings} />

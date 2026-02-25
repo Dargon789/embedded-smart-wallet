@@ -1,0 +1,45 @@
+import { DocImage, Steps, Step } from "@doc";
+import ProjectOverview from '../assets/project-overview.png';
+import EnabledServices from './assets/enabled-services.png';
+import { createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Edit thirdweb API Key",
+	description:
+		"All services on API keys are enabled by default. You can disable any services or edit settings for each service.",
+	image: {
+		title: "Edit thirdweb API Key",
+		icon: "thirdweb",
+	},
+});
+
+# Enabled Services
+
+
+
+All services on API keys per project are enabled by default. If you want to disable any services or edit settings for each service:
+
+<Steps>
+
+<Step title="Select Project">
+
+Select the project you want to edit services for from the Overview section of your dashboard.
+
+<DocImage src={ProjectOverview} alt="Project Overview" />
+
+</Step>
+
+<Step title="Project Settings">
+
+Navigate to the project's settings and locate "Enabled Services".
+
+<DocImage src={EnabledServices} alt="Enabled Services" />
+
+</Step>
+
+<Step title="Modify Services">
+Toggle the specified service you want on or off. Each service is on by default and toggling will turn off access to the service for the project.
+</Step>
+
+</Steps>
+

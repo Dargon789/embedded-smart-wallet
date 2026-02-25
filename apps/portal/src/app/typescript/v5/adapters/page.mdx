@@ -1,0 +1,150 @@
+# Adapters
+
+The thirdweb SDK can work side by side with:
+
+- any wallet that supports EIP1193
+- ethers.js v5
+- ethers.js v6
+- viem
+- older versions of the @thirdweb-dev/sdk (using the ethers.js v5 adapter)
+
+Adapters allow you to use contracts, providers and wallets from these libraries with the thirdweb SDK and vice versa.
+
+## EIP1193
+
+You can use any wallet that supports EIP1193 with the thirdweb SDK by converting it using `EIP1193.fromProvider`:
+
+```ts
+import { EIP1193 } from "thirdweb/wallets";
+
+// Create a Thirdweb wallet from a EIP1193 provider
+const wallet = EIP1193.fromProvider({
+  provider: yourProvider, // any EIP1193 provider
+});
+ 
+// Use like any other Thirdweb wallet
+const account = await wallet.connect({
+  client: createThirdwebClient({ clientId: "..." }),
+});
+ 
+// Sign messages
+await account.signMessage({ message: "Hello World" });
+```
+
+You can also convert a thirdweb account to an EIP1193 provider using `EIP1193.toProvider`, which can then be used with other libraries:
+
+```ts
+import { EIP1193 } from "thirdweb/wallets";
+ 
+// Create an EIP-1193 provider from a Thirdweb wallet
+const provider = EIP1193.toProvider({
+  wallet,
+  chain: ethereum,
+  client: createThirdwebClient({ clientId: "..." }),
+});
+ 
+// Use with any EIP-1193 compatible library
+const accounts = await provider.request({
+  method: "eth_requestAccounts",
+});
+```
+
+## viem
+
+You can use an existing wallet client from viem with the thirdweb SDK by converting it using the `viemAdapter`:
+
+```ts
+import { viemAdapter } from "thirdweb/adapters/viem";
+
+// convert a viem wallet client to a thirdweb wallet
+const walletClient = createWalletClient(...);
+const thirdwebWallet = await viemAdapter.wallet.fromViem({
+  walletClient,
+});
+
+
+// convert a thirdweb account to viem wallet client
+const viemClientWallet = viemAdapter.wallet.toViem({
+  client,
+  chain,
+  wallet,
+});
+```
+
+You can also convert viem public clients and contracts from and to the thirdweb SDK.
+
+View the [viemAdapter](/references/typescript/v5/viemAdapter) reference for more details.
+
+## Ethers v6
+
+You can use an existing ethers.js v6 Signer with the thirdweb SDK by converting it using the `ethers6Adapter`:
+
+```ts
+import { ethers6Adapter } from "thirdweb/adapters/ethers6";
+import { sendTransaction } from "thirdweb";
+
+// convert a ethers signer
+const signer: ethers.Signer = ...;
+const account = await ethers6Adapter.signer.fromEthers({
+  signer,
+});
+
+// use it with the thirdweb SDK
+await sendTransaction({
+  transaction,
+  account,
+});
+```
+
+Similarly, you can use any wallets created with the thirdweb SDK with ethers.js v6 by converting them using the `ethers6Adapter`:
+
+```ts
+import { ethers6Adapter } from "thirdweb/adapters/ethers6";
+import { createThirdwebClient, inAppWallet } from "thirdweb/wallets";
+import { sepolia } from "thirdweb/chains";
+
+const client = createThirdwebClient({ clientId });
+const wallet = inAppWallet();
+const chain = sepolia;
+const account = await wallet.connect({
+	client,
+	strategy: "google",
+});
+
+// convert a thirdweb account to ethers signer
+const ethersSigner = await ethers6Adapter.signer.toEthers({
+	client,
+	chain,
+	account,
+});
+```
+
+You can also convert ethers.js providers and contracts from and to the thirdweb SDK.
+
+View the [ethers6Adapter](/references/typescript/v5/ethers6Adapter) reference for more details.
+
+## Ethers v5
+
+You can use an existing ethers.js v5 Signer with the thirdweb SDK by converting it using the `ethers5Adapter`:
+
+```ts
+import { ethers5Adapter } from "thirdweb/adapters/ethers5";
+
+// convert an ethers signer to a thirdweb account
+const signer: ethers.Signer = ...;
+const account = await ethers5Adapter.signer.fromEthers({
+  signer,
+});
+
+// convert a thirdweb account to ethers signer
+const ethersSigner = await ethers5Adapter.signer.toEthers({
+  client,
+  chain,
+  account
+});
+```
+
+You can also convert ethers.js providers and contracts from and to the thirdweb SDK.
+
+View the [ethers5Adapter](/references/typescript/v5/ethers5Adapter) reference for more details.
+

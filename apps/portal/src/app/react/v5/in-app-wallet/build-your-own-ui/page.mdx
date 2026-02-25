@@ -1,0 +1,189 @@
+import {
+	Tabs,
+	TabsList,
+	TabsTrigger,
+	TabsContent,
+	GithubTemplateCard,
+	Stack,
+	createMetadata,
+	Callout,
+} from "@doc";
+
+export const metadata = createMetadata({
+	image: {
+		title: "Build a custom UI for connecting in-app wallets",
+		icon: "wallets",
+	},
+	title: "Build a custom UI for in-app wallets",
+	description:
+		"You have full control with the connection hooks and functions to build your own UI",
+});
+
+# Build your own UI
+
+## Low level control to authenticate and connect wallets
+
+You have full control with the connection hooks and functions to build your own UI. To use in-app wallets, you first choose an authentication strategy and then connect.
+
+## Setup the ThirdwebProvider
+
+This will ensure that the wallet is available to all components in your app, handle connection states and auto-connection on page load.
+
+```jsx
+import { ThirdwebProvider } from "thirdweb/react";
+
+<ThirdwebProvider>
+	<YourApp />
+</ThirdwebProvider>;
+```
+
+## Create an in-app wallet
+
+The simplest way to create an in-app wallet is to use the `inAppWallet()` function. By default, this will create a wallet that supports email/password login, Google, Apple, Facebook login, and passkey.
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallet = inAppWallet();
+```
+
+You can also customize the wallet by passing in options.
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+
+const wallet = inAppWallet({
+	auth: {
+        mode, // options are "popup" | "redirect" | "window";
+        options, // ex: ["discord", "farcaster", "apple", "facebook", "google", "passkey"],
+        passkeyDomain, // for passkey, the domain that the passkey is created on
+        redirectUrl, // the URL to redirect to after authentication
+	},
+	metadata, // metadata for the wallet
+	partnerId, // partner ID for the wallet
+	smartAccount, // smart account options for the wallet
+});
+```
+
+[View all in-app wallet options](/references/typescript/v5/InAppWalletCreationOptions).
+
+Once created, you can connect to the wallet using the `connect()` function with the desired `strategy`.
+
+## Authenticate via Google
+
+Note that for Apple and Facebook, you just need to update the strategy to "facebook" or "apple".
+
+In React and React Native, the `useConnect()` hook handles authentication and connection states.
+
+```tsx
+import { inAppWallet } from "thirdweb/wallets";
+import { useConnect } from "thirdweb/react";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		const wallet = inAppWallet();
+		await wallet.connect({
+			client,
+			strategy: "google",
+		});
+		return wallet;
+	});
+};
+```
+
+Other social options include Apple, Facebook, Discord, Farcaster and more.
+
+## Authenticate via Email verification
+
+```typescript
+import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const preLogin = async (email: string) => {
+	// send email verification code
+	await preAuthenticate({
+		client,
+		strategy: "email",
+		email, // ex: user@example.com
+	});
+};
+
+const handleLogin = async (email: string, verificationCode: string) => {
+	// verify email and connect
+	await connect(async () => {
+		const wallet = inAppWallet();
+		await wallet.connect({
+			client,
+			strategy: "email",
+			email,
+			verificationCode,
+		});
+		return wallet;
+	});
+};
+```
+
+## Authenticate via Phone number verification
+
+```typescript
+import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const preLogin = async (phoneNumber: string) => {
+	// send phone number verification code
+	await preAuthenticate({
+		client,
+		strategy: "phone",
+		phoneNumber, // ex: +1234567890
+	});
+};
+
+const handleLogin = async (phoneNumber: string, verificationCode: string) => {
+	// verify phone number and connect
+	await connect(async () => {
+		const wallet = inAppWallet();
+		await wallet.connect({
+			client,
+			strategy: "phone",
+			phoneNumber,
+			verificationCode,
+		});
+		return wallet;
+	});
+};
+```
+
+## Authenticate via Passkey
+
+<Callout variant="info" title="React Native support">
+
+For React Native, `passkeyDomain` is required and must be set to a valid app universal link. To setup universal links for your application, follow the [iOS documentation](https://developer.apple.com/documentation/xcode/supporting-associated-domains) and [Android documentation](https://developer.android.com/identity/sign-in/credential-manager#add-support-dal).
+
+</Callout>
+
+```typescript
+import { inAppWallet, hasStoredPasskey } from "thirdweb/wallets/in-app";
+
+const { connect } = useConnect();
+
+const handleLogin = async () => {
+	await connect(async () => {
+		const wallet = inAppWallet({
+			auth: {
+				passkeyDomain: "example.com", // defaults to current url
+			},
+		});
+		const hasPasskey = await hasStoredPasskey(client);
+		await wallet.connect({
+			client,
+			strategy: "passkey",
+			type: hasPasskey ? "sign-in" : "sign-up",
+		});
+		return wallet;
+	});
+};
+```
