@@ -29,6 +29,7 @@
     "@thirdweb-dev/api": "workspace:*",
     "@thirdweb-dev/service-utils": "workspace:*",
     "@thirdweb-dev/vault-sdk": "workspace:*",
+    "@vercel/analytics": "^1.6.1",
     "@vercel/functions": "2.2.2",
     "@vercel/og": "^0.6.8",
     "@workspace/ui": "workspace:*",
