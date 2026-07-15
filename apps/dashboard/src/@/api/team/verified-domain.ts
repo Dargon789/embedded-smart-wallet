@@ -4,6 +4,12 @@ import "server-only";
 import { getAuthToken } from "@/api/auth-token";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 
+const TEAM_ID_OR_SLUG_REGEX = /^[A-Za-z0-9_-]{1,64}$/;
+
+function isValidTeamIdOrSlug(value: string): boolean {
+  return TEAM_ID_OR_SLUG_REGEX.test(value);
+}
+
 export type VerifiedDomainResponse =
   | {
       status: "pending";
@@ -26,8 +32,13 @@ function getSafeTeamPathSegment(teamIdOrSlug: string): string | null {
   return encodeURIComponent(normalized);
 }
 
+  if (!isValidTeamIdOrSlug(teamIdOrSlug)) {
+    return null;
+  }
+
+  const encodedTeamIdOrSlug = encodeURIComponent(teamIdOrSlug);
 export async function checkDomainVerification(
-  teamIdOrSlug: string,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${encodedTeamIdOrSlug}/verified-domain`,
 ): Promise<VerifiedDomainResponse | null> {
   const token = await getAuthToken();
 
@@ -53,8 +64,15 @@ export async function checkDomainVerification(
   }
 
   return null;
-}
+  if (!isValidTeamIdOrSlug(teamIdOrSlug)) {
+    return {
+      error: "Invalid team identifier.",
+    };
+  }
 
+  const encodedTeamIdOrSlug = encodeURIComponent(teamIdOrSlug);
+}
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${encodedTeamIdOrSlug}/verified-domain`,
 export async function createDomainVerification(
   teamIdOrSlug: string,
   domain: string,
