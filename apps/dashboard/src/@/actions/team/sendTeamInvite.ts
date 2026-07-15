@@ -3,6 +3,10 @@
 import { getAuthToken } from "@/api/auth-token";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 
+function isValidTeamId(teamId: string): boolean {
+  return /^[A-Za-z0-9_-]+$/.test(teamId);
+}
+
 export async function sendTeamInvites(options: {
   teamId: string;
   invites: Array<{ email: string; role: "OWNER" | "MEMBER" }>;
@@ -25,6 +29,13 @@ export async function sendTeamInvites(options: {
     };
   }
 
+  if (!isValidTeamId(options.teamId)) {
+    return {
+      errorMessage: "Invalid team ID",
+      ok: false,
+    };
+  }
+
   const results = await Promise.allSettled(
     options.invites.map((invite) => sendInvite(options.teamId, invite, token)),
   );
@@ -40,8 +51,9 @@ async function sendInvite(
   invite: { email: string; role: "OWNER" | "MEMBER" },
   token: string,
 ) {
+  const safeTeamId = encodeURIComponent(teamId);
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${teamId}/invites`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${safeTeamId}/invites`,
     {
       body: JSON.stringify({
         inviteEmail: invite.email,
