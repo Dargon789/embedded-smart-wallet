@@ -204,7 +204,7 @@ export function TokenSelector(props: {
       renderOption={renderOption}
       searchPlaceholder="Search by name or symbol"
       showCheck={props.showCheck}
-      side={props.side}
+      options={finalOptions}
       value={tokensQuery.isPending ? undefined : selectedValue}
     />
   );
