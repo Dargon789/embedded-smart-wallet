@@ -12,8 +12,17 @@ export async function deleteTeam(options: { teamId: string }) {
     } as const;
   }
 
+  const teamIdPattern = /^[A-Za-z0-9_-]{1,128}$/;
+  if (!teamIdPattern.test(options.teamId)) {
+    return {
+      errorMessage: "Invalid team ID.",
+      status: "error",
+    } as const;
+  }
+  const safeTeamId = encodeURIComponent(options.teamId);
+
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${options.teamId}`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${safeTeamId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
