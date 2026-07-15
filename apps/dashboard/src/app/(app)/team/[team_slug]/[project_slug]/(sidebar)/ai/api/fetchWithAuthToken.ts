@@ -20,23 +20,6 @@ type FetchWithKeyOptions = {
 
 const ALLOWED_AI_HOST_URL = new URL(NEXT_PUBLIC_THIRDWEB_AI_HOST);
 
-function sanitizeEndpoint(endpoint: string): string {
-  if (!endpoint.startsWith("/")) {
-    throw new Error("Endpoint must be a relative path starting with '/'");
-  }
-
-  if (endpoint.startsWith("//")) {
-    throw new Error("Protocol-relative endpoints are not allowed");
-  }
-
-  if (endpoint.includes("\\") || endpoint.includes("..")) {
-    throw new Error("Invalid endpoint path");
-  }
-
-  const parsed = new URL(endpoint, "https://sanitizer.local");
-  return `${parsed.pathname}${parsed.search}`;
-}
-
 export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
   const timeout = options.timeout || 30000;
 
@@ -49,8 +32,15 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("No auth token found");
     }
 
-    const safeEndpoint = sanitizeEndpoint(options.endpoint);
-    const endpointUrl = new URL(safeEndpoint, ALLOWED_AI_HOST_URL);
+    // Disallow absolute URLs in endpoint to prevent overriding the allowed host.
+    if (
+      options.endpoint.startsWith("http://") ||
+      options.endpoint.startsWith("https://")
+    ) {
+      throw new Error("Absolute URLs are not allowed for endpoint");
+    }
+
+    const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
 
     if (
       endpointUrl.protocol !== "http:" &&
@@ -61,6 +51,11 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
 
     if (endpointUrl.hostname !== ALLOWED_AI_HOST_URL.hostname) {
       throw new Error("Endpoint host is not allowed");
+    }
+
+    // Ensure the resolved path does not escape the intended base via traversal.
+    if (endpointUrl.pathname.includes("/../") || endpointUrl.pathname.includes("/./")) {
+      throw new Error("Invalid endpoint path");
     }
 
     const response = await fetch(endpointUrl.toString(), {

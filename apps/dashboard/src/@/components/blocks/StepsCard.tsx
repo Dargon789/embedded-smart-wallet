@@ -27,8 +27,7 @@ export const StepsCard: React.FC<StepsCardProps> = ({
   const firstIncomplete = steps.findIndex((step) => !step.completed);
   const lastStepCompleted =
     firstIncomplete === -1 ? steps.length - 1 : firstIncomplete - 1;
-  const percentage = ((lastStepCompleted + 1) / steps.length) * 100;
-  const isComplete = useMemo(() => firstIncomplete === -1, [firstIncomplete]);
+  const isComplete = firstIncomplete === -1;
 
   if (steps.length === 0 || isComplete) {
     return null;
