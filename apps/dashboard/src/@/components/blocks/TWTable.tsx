@@ -110,7 +110,7 @@ export function TWTable<TRowData>(tableProps: TWTableProps<TRowData>) {
         ? {
             manualPagination: true,
             onPaginationChange: setPagination,
-            pageCount: Math.ceil(tableProps.data.length / pageSize),
+            pageCount: Math.ceil((tableProps.data?.length ?? 0) / pageSize),
             state: { pagination },
           }
         : {},
