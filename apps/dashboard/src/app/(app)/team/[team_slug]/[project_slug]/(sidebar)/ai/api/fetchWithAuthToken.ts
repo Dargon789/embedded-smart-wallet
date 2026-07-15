@@ -29,7 +29,8 @@ function sanitizeEndpoint(endpoint: string): string {
     throw new Error("Protocol-relative endpoints are not allowed");
   }
 
-  if (endpoint.includes("\\") || endpoint.includes("..")) {
+  const [path] = endpoint.split("?");
+  if (path.includes("\\") || path.includes("..")) {
     throw new Error("Invalid endpoint path");
   }
 
