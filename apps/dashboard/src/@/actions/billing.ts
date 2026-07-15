@@ -6,6 +6,10 @@ import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 import type { ChainInfraSKU } from "@/types/billing";
 import { getAbsoluteUrl } from "@/utils/vercel";
 
+function isSafePathSegment(value: string): boolean {
+  return /^[a-zA-Z0-9_-]{1,100}$/.test(value);
+}
+
 const TEAM_IDENTIFIER_REGEX = /^[a-zA-Z0-9_-]{1,128}$/;
 
 function isValidTeamIdentifier(value: string): boolean {
@@ -16,9 +20,17 @@ export async function reSubscribePlan(options: {
   teamId: string;
 }): Promise<{ status: number }> {
   const token = await getAuthToken();
+  if (!isSafePathSegment(options.teamId)) {
+    return {
+      status: 400,
+    };
+  }
+
+  const safeTeamId = encodeURIComponent(options.teamId);
+
   if (!token) {
     return {
-      status: 401,
+      `/v1/teams/${safeTeamId}/checkout/resubscribe-plan`,
     };
   }
 
@@ -57,9 +69,18 @@ export async function reSubscribePlan(options: {
 }
 
 export async function getChainInfraCheckoutURL(options: {
+  if (!isSafePathSegment(options.teamSlug)) {
+    return {
+      error: "Invalid team slug.",
+      status: "error",
+    } as const;
+  }
+
+  const safeTeamSlug = encodeURIComponent(options.teamSlug);
+
   teamSlug: string;
   skus: ChainInfraSKU[];
-  chainId: number;
+      `/v1/teams/${safeTeamSlug}/checkout/create-link`,
   annual: boolean;
 }) {
   const token = await getAuthToken();
