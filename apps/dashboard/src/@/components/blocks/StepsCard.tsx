@@ -32,7 +32,7 @@ export const StepsCard: React.FC<StepsCardProps> = ({
   if (steps.length === 0 || isComplete) {
     return null;
   }
-
+  const percentage = ((lastStepCompleted + 1) / steps.length) * 100;
   return (
     <div className={cn("rounded-lg border border-border bg-card p-4 lg:p-6")}>
       {/* Title + Desc */}
