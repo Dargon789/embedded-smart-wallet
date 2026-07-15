@@ -6,6 +6,12 @@ import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 import type { ChainInfraSKU } from "@/types/billing";
 import { getAbsoluteUrl } from "@/utils/vercel";
 
+const TEAM_IDENTIFIER_REGEX = /^[a-zA-Z0-9_-]{1,128}$/;
+
+function isValidTeamIdentifier(value: string): boolean {
+  return TEAM_IDENTIFIER_REGEX.test(value);
+}
+
 export async function reSubscribePlan(options: {
   teamId: string;
 }): Promise<{ status: number }> {
@@ -16,9 +22,17 @@ export async function reSubscribePlan(options: {
     };
   }
 
+  if (!isValidTeamIdentifier(options.teamId)) {
+    return {
+      status: 400,
+    };
+  }
+
+  const encodedTeamId = encodeURIComponent(options.teamId);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${options.teamId}/checkout/resubscribe-plan`,
+      `/v1/teams/${encodedTeamId}/checkout/resubscribe-plan`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {
@@ -57,9 +71,18 @@ export async function getChainInfraCheckoutURL(options: {
     } as const;
   }
 
+  if (!isValidTeamIdentifier(options.teamSlug)) {
+    return {
+      error: "Invalid team identifier.",
+      status: "error",
+    } as const;
+  }
+
+  const encodedTeamSlug = encodeURIComponent(options.teamSlug);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${options.teamSlug}/checkout/create-link`,
+      `/v1/teams/${encodedTeamSlug}/checkout/create-link`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {
