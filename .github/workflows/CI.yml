@@ -179,6 +179,9 @@ jobs:
 
   size:
     needs: optimize_ci
+    permissions:
+      contents: read
+      pull-requests: write
     # only run on pull requests
     if:  github.event_name == 'pull_request' && needs.optimize_ci.outputs.skip == 'false'
     timeout-minutes: 15

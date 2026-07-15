@@ -3,6 +3,12 @@
 import { getAuthToken } from "@/api/auth-token";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 
+const TEAM_ID_PATTERN = /^[A-Za-z0-9_-]+$/;
+
+function isValidTeamId(teamId: string): boolean {
+  return TEAM_ID_PATTERN.test(teamId);
+}
+
 export async function sendTeamInvites(options: {
   teamId: string;
   invites: Array<{ email: string; role: "OWNER" | "MEMBER" }>;
@@ -40,20 +46,30 @@ async function sendInvite(
   invite: { email: string; role: "OWNER" | "MEMBER" },
   token: string,
 ) {
-  const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${teamId}/invites`,
-    {
-      body: JSON.stringify({
-        inviteEmail: invite.email,
-        inviteRole: invite.role,
-      }),
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    },
+  if (!isValidTeamId(teamId)) {
+    return {
+      email: invite.email,
+      errorMessage: "Invalid team id",
+      ok: false,
+    };
+  }
+
+  const inviteUrl = new URL(
+    `/v1/teams/${encodeURIComponent(teamId)}/invites`,
+    NEXT_PUBLIC_THIRDWEB_API_HOST,
   );
+
+  const res = await fetch(inviteUrl.toString(), {
+    body: JSON.stringify({
+      inviteEmail: invite.email,
+      inviteRole: invite.role,
+    }),
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
 
   if (!res.ok) {
     const errorMessage = await res.text();

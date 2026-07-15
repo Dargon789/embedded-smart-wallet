@@ -16,9 +16,18 @@ export async function reSubscribePlan(options: {
     };
   }
 
+  // Restrict to expected identifier characters to avoid path manipulation.
+  if (!/^[A-Za-z0-9_-]+$/.test(options.teamId)) {
+    return {
+      status: 400,
+    };
+  }
+
+  const teamIdSegment = encodeURIComponent(options.teamId);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${options.teamId}/checkout/resubscribe-plan`,
+      `/v1/teams/${teamIdSegment}/checkout/resubscribe-plan`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {
@@ -57,9 +66,19 @@ export async function getChainInfraCheckoutURL(options: {
     } as const;
   }
 
+  const teamSlug = options.teamSlug.trim();
+  if (!/^[a-z0-9-]{1,64}$/.test(teamSlug)) {
+    return {
+      error: "An unknown error occurred, please try again later.",
+      status: "error",
+    } as const;
+  }
+
+  const safeTeamSlug = encodeURIComponent(teamSlug);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${options.teamSlug}/checkout/create-link`,
+      `/v1/teams/${safeTeamSlug}/checkout/create-link`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {

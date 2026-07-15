@@ -3,6 +3,9 @@
 
 name: Release Nightly
 
+permissions:
+  contents: read
+
 on:
   schedule:
     # every night at 00:00 UTC
