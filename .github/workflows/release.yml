@@ -3,6 +3,9 @@
 
 name: Release Stable
 
+permissions:
+  contents: read
+
 on:
   push:
     paths:
