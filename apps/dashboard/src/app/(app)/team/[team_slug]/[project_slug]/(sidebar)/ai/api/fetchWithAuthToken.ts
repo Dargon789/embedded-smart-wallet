@@ -32,15 +32,31 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("No auth token found");
     }
 
-    // Disallow absolute URLs in endpoint to prevent overriding the allowed host.
-    if (
-      options.endpoint.startsWith("http://") ||
-      options.endpoint.startsWith("https://")
-    ) {
-      throw new Error("Absolute URLs are not allowed for endpoint");
+    // Enforce endpoint as a strict relative path under the trusted host.
+    // This prevents host override, protocol-relative URLs, and traversal tricks.
+    const rawEndpoint = options.endpoint;
+
+    if (!rawEndpoint.startsWith("/")) {
+      throw new Error("Endpoint must be an absolute path starting with '/'");
     }
 
-    const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
+    if (
+      rawEndpoint.startsWith("//") ||
+      rawEndpoint.includes("\\") ||
+      rawEndpoint.includes("#") ||
+      rawEndpoint.startsWith("http://") ||
+      rawEndpoint.startsWith("https://")
+    ) {
+      throw new Error("Invalid endpoint format");
+    }
+
+    const [pathOnly] = rawEndpoint.split("?");
+    const segments = pathOnly.split("/");
+    if (segments.some((segment) => segment === "." || segment === "..")) {
+      throw new Error("Invalid endpoint path");
+    }
+
+    const endpointUrl = new URL(rawEndpoint, ALLOWED_AI_HOST_URL.origin);
 
     if (
       endpointUrl.protocol !== "http:" &&
@@ -51,11 +67,6 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
 
     if (endpointUrl.hostname !== ALLOWED_AI_HOST_URL.hostname) {
       throw new Error("Endpoint host is not allowed");
-    }
-
-    // Ensure the resolved path does not escape the intended base via traversal.
-    if (endpointUrl.pathname.includes("/../") || endpointUrl.pathname.includes("/./")) {
-      throw new Error("Invalid endpoint path");
     }
 
     const response = await fetch(endpointUrl.toString(), {
