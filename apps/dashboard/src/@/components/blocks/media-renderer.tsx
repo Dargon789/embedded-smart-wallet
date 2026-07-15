@@ -16,14 +16,7 @@ export function CustomMediaRenderer(props: MediaRendererProps) {
   }, [loadedSrc, props.src]);
 
   return (
-    <div
-      className="relative z-0"
-      onLoad={() => {
-        if (props.src) {
-          setLoadedSrc(props.src);
-        }
-      }}
-    >
+    <div className="relative z-0">
       {!loadedSrc && <Skeleton className="absolute inset-0" />}
       <MediaRenderer
         {...props}
