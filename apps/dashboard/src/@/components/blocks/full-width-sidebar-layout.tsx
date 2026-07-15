@@ -279,7 +279,7 @@ function RenderSidebarMenu(props: { links: ShadcnSidebarLink[] }) {
         // link
         if ("href" in link) {
           return (
-            <SidebarMenuSubItem key={link.href}>
+            <SidebarMenuItem key={link.href}>
               <SidebarMenuButton asChild>
                 <NavLink
                   activeClassName="text-foreground bg-accent"
@@ -295,7 +295,7 @@ function RenderSidebarMenu(props: { links: ShadcnSidebarLink[] }) {
                   <span>{link.label}</span>
                 </NavLink>
               </SidebarMenuButton>
-            </SidebarMenuSubItem>
+            </SidebarMenuItem>
           );
         }
 
