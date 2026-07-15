@@ -17,6 +17,15 @@ export type VerifiedDomainResponse =
       verifiedAt: Date;
     };
 
+function getSafeTeamPathSegment(teamIdOrSlug: string): string | null {
+  const normalized = teamIdOrSlug.trim();
+  if (!/^[A-Za-z0-9_-]+$/.test(normalized)) {
+    return null;
+  }
+
+  return encodeURIComponent(normalized);
+}
+
 export async function checkDomainVerification(
   teamIdOrSlug: string,
 ): Promise<VerifiedDomainResponse | null> {
@@ -26,8 +35,13 @@ export async function checkDomainVerification(
     return null;
   }
 
+  const safeTeamPathSegment = getSafeTeamPathSegment(teamIdOrSlug);
+  if (!safeTeamPathSegment) {
+    return null;
+  }
+
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${teamIdOrSlug}/verified-domain`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${safeTeamPathSegment}/verified-domain`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -53,8 +67,15 @@ export async function createDomainVerification(
     };
   }
 
+  const safeTeamPathSegment = getSafeTeamPathSegment(teamIdOrSlug);
+  if (!safeTeamPathSegment) {
+    return {
+      error: "Invalid team identifier.",
+    };
+  }
+
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${teamIdOrSlug}/verified-domain`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${safeTeamPathSegment}/verified-domain`,
     {
       body: JSON.stringify({ domain }),
       headers: {
