@@ -7,6 +7,8 @@ import { BASE_URL } from "@/constants/env-utils";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 import { getClientThirdwebClient } from "@/constants/thirdweb-client.client";
 
+const TEAM_SLUG_REGEX = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
+
 export async function createEcosystem(options: {
   teamSlug: string;
   teamId: string;
@@ -23,6 +25,14 @@ export async function createEcosystem(options: {
 
   const { teamSlug, teamId, logo, ...data } = options;
 
+  if (!TEAM_SLUG_REGEX.test(teamSlug)) {
+    return {
+      status: 400,
+    };
+  }
+
+  const safeTeamSlug = encodeURIComponent(teamSlug);
+
   const imageUrl = await upload({
     client: getClientThirdwebClient({
       jwt: token,
@@ -32,7 +42,7 @@ export async function createEcosystem(options: {
   });
 
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${teamSlug}/checkout/create-link`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${safeTeamSlug}/checkout/create-link`,
     {
       body: JSON.stringify({
         baseUrl: BASE_URL,
