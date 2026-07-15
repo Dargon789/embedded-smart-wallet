@@ -21,7 +21,7 @@ export async function getTeamBySlug(slug: string) {
   }
 
   const teamRes = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${slug}`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${encodeURIComponent(slug)}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
