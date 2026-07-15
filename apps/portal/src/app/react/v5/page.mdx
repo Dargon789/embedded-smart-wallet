@@ -1,0 +1,97 @@
+import { Details, ArticleIconCard, Stack, GithubTemplateCard, Callout, InstallTabs } from "@doc";
+import {
+	ZapIcon,
+	ScrollTextIcon,
+	ArrowRightLeftIcon,
+	WalletIcon,
+	BlocksIcon,
+	CodeIcon,
+	FolderTreeIcon,
+	PlugZapIcon,
+	ComponentIcon,
+	CableIcon,
+	ExternalLink
+} from "lucide-react";
+import { TypeScriptIcon } from "@/icons";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+# React SDK
+
+On top of the core typescript API, `thirdweb/react` exports various Components and Hooks to easily connect wallets & interact with smart contracts
+
+## Installation
+
+<InstallTabs
+	npm="npm i thirdweb"
+	yarn="yarn add thirdweb"
+	pnpm="pnpm i thirdweb"
+	bun="bun i thirdweb"
+/>
+
+## Quickstart
+
+Follow this [guide](/react/v5/getting-started) to get started with the React SDK.
+<Stack>
+<ArticleIconCard
+	title="Getting started"
+	icon={ZapIcon}
+	href="/react/v5/getting-started"
+	description="Get started with the React SDK"
+/>
+</Stack>
+
+## Starter kits
+
+You can quickly create a new project with the thirdweb CLI
+
+```bash
+npx thirdweb create app
+```
+
+or clone the Next.js or Vite starter repo:
+
+<Stack>
+<GithubTemplateCard
+	title="Next.js + thirdweb starter repo"
+	descrption="A starter template for using the thirdweb package in a Next.js app"
+	href="https://github.com/thirdweb-example/next-starter"
+/>
+
+<GithubTemplateCard
+	title="Vite + thirdweb starter repo"
+	descrption="A starter template for using the thirdweb package in a Vite app"
+	href="https://github.com/thirdweb-example/vite-starter"
+/>
+</Stack>
+
+## Live Playground
+
+You can interact with the React SDK in the [Live Playground](https://playground.thirdweb.com/).
+
+<Stack>
+
+<ArticleIconCard
+	title="Try the demo"
+	icon={ExternalLink}
+	href="https://playground.thirdweb.com"
+	description="See the SDK in action on the live playground"
+/>
+
+</Stack>
+
+## API Reference
+
+Browse the full API reference for detailed information on each function, hook and component.
+
+<Stack>
+
+<ArticleIconCard
+	title="API Reference"
+	icon={CodeIcon}
+	href="/references/typescript/v5"
+	description="See the SDK in action on the live playground"
+/>
+
+</Stack>
+
