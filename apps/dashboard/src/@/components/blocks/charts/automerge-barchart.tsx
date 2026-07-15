@@ -162,7 +162,7 @@ export function AutoMergeBarChart(props: {
       showLegend
       toolTipLabelFormatter={(_v, item) => {
         if (Array.isArray(item)) {
-          const time = item[0].payload.time as number;
+          const time = item[0]?.payload?.time as number;
           return format(new Date(time), "MMM d, yyyy");
         }
         return undefined;
