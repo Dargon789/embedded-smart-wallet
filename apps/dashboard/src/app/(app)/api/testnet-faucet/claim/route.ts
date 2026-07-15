@@ -59,7 +59,10 @@ export const POST = async (req: NextRequest) => {
 
   const requestBody = (await req.json()) as RequestTestnetFundsPayload;
   const { chainId, toAddress, turnstileToken } = requestBody;
-  if (Number.isNaN(chainId)) {
+  const normalizedChainId =
+    typeof chainId === "number" ? chainId : Number(chainId);
+
+  if (!Number.isInteger(normalizedChainId) || normalizedChainId <= 0) {
     throw new Error("Invalid chain ID.");
   }
 
@@ -224,7 +227,15 @@ export const POST = async (req: NextRequest) => {
       cacheSet(addressCacheKey, "claimed", 24 * 60 * 60),
     ]);
     // then actually transfer the funds
-    const url = `${THIRDWEB_ENGINE_URL}/backend-wallet/${chainId}/transfer`;
+    const allowedChainIds = new Set(
+      teams.flatMap((team) => team.supportedChains?.map((c) => c.chainId) ?? []),
+    );
+
+    if (!allowedChainIds.has(normalizedChainId)) {
+      return NextResponse.json({ error: "Unsupported chain ID." }, { status: 400 });
+    }
+
+    const url = `${THIRDWEB_ENGINE_URL}/backend-wallet/${normalizedChainId}/transfer`;
     const response = await fetch(url, {
       body: JSON.stringify({
         amount: amountToClaim,
