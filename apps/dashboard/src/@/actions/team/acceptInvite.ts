@@ -3,6 +3,10 @@
 import { getAuthToken } from "@/api/auth-token";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 
+function isSafePathId(value: string) {
+  return /^[A-Za-z0-9_-]+$/.test(value);
+}
+
 export async function acceptInvite(options: {
   teamId: string;
   inviteId: string;
@@ -16,8 +20,15 @@ export async function acceptInvite(options: {
     };
   }
 
+  if (!isSafePathId(options.teamId) || !isSafePathId(options.inviteId)) {
+    return {
+      errorMessage: "Invalid invite or team identifier",
+      ok: false,
+    };
+  }
+
   const res = await fetch(
-    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${options.teamId}/invites/${options.inviteId}/accept`,
+    `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${encodeURIComponent(options.teamId)}/invites/${encodeURIComponent(options.inviteId)}/accept`,
     {
       body: JSON.stringify({}),
       headers: {
