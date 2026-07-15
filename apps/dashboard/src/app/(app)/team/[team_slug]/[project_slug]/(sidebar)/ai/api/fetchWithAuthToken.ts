@@ -56,7 +56,7 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("Invalid endpoint path");
     }
 
-    const endpointUrl = new URL(rawEndpoint, ALLOWED_AI_HOST_URL.origin);
+    const endpointUrl = new URL(rawEndpoint, ALLOWED_AI_HOST_URL);
 
     if (
       endpointUrl.protocol !== "http:" &&
