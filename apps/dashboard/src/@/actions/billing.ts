@@ -16,9 +16,18 @@ export async function reSubscribePlan(options: {
     };
   }
 
+  // Restrict to expected identifier characters to avoid path manipulation.
+  if (!/^[A-Za-z0-9_-]+$/.test(options.teamId)) {
+    return {
+      status: 400,
+    };
+  }
+
+  const teamIdSegment = encodeURIComponent(options.teamId);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${options.teamId}/checkout/resubscribe-plan`,
+      `/v1/teams/${teamIdSegment}/checkout/resubscribe-plan`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {
