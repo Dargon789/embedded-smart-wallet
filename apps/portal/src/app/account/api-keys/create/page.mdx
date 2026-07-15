@@ -1,0 +1,58 @@
+import { DocImage, Callout, Steps, Step } from "@doc";
+import { createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Create an API Key",
+	description:
+		"Log in to the dashboard and navigate to Settings > API Keys view",
+	image: {
+		title: "Create thirdweb API Key",
+		icon: "thirdweb",
+	},
+});
+
+# Create a Project
+
+<Steps>
+
+<Step title="Login to dashboard">
+
+Log in to the dashboard and go to your **[Team projects page](https://thirdweb.com/team)**
+
+</Step>
+
+<Step title="Create Project">
+
+Click on Add New > Create Project
+
+</Step>
+
+<Step title="Assign a name">
+
+Assign a descriptive name to the Project.
+
+</Step>
+
+<Step title="Setup Domain Restriction">
+Input the domains you want to restrict your application to in Allowed Domains then select Next. **Restricting domains is highly recommended for any applications with client-side code or frontend applications.**
+
+1. Authorize all domains by selecting the checkbox or inputting `*` into the text field
+2. Authorize local URLs with `localhost:<port>`
+
+
+</Step>
+
+<Step title="Store Secret key">
+
+Store your secret key in a secure location and confirm that you have stored it by checking the checkbox then select Complete.
+
+<Callout variant="danger" title="Secret Key">
+	Do not share secret keys. They grant access to all thirdweb services. Secret
+	keys should only be used in backend environments like CLI, scripts, and
+	servers. Never expose secret keys in client-side code due to the lack of
+	access restrictions.
+</Callout>
+
+
+</Step>
+</Steps>
