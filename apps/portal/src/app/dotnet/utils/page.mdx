@@ -1,0 +1,310 @@
+import { Callout, Details, createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "Common Utils | Thirdweb .NET SDK",
+	description: "Frequently used helpers for working with the Thirdweb .NET SDK.",
+});
+
+# Utils
+
+`Utils` bundles the SDK's most handy helpers for formatting values, working with addresses, and preparing typed data. If you need an API not covered here, check the [full reference](https://thirdweb-dev.github.io/dotnet/docs/Thirdweb.Utils.html).
+
+## Useful constants
+
+```csharp
+Constants.ADDRESS_ZERO             // 0x0000…0000 (zero address)
+Constants.NATIVE_TOKEN_ADDRESS     // 0xEeee…EEeE (native token sentinel)
+Constants.DECIMALS_18              // 1e18 as a double (decimal scaling helper)
+
+Constants.IERC20_INTERFACE_ID      // ERC-165 ID for ERC-20
+Constants.IERC721_INTERFACE_ID     // ERC-165 ID for ERC-721
+Constants.IERC1155_INTERFACE_ID    // ERC-165 ID for ERC-1155
+
+Constants.ENTRYPOINT_ADDRESS_V06   // Default ERC-4337 entry point v0.6
+Constants.ENTRYPOINT_ADDRESS_V07   // Default ERC-4337 entry point v0.7
+
+Constants.DEFAULT_FACTORY_ADDRESS_V06 // Default Thirdweb factory v0.6
+Constants.DEFAULT_FACTORY_ADDRESS_V07 // Default Thirdweb factory v0.7
+
+Constants.EIP_1271_MAGIC_VALUE     // Expected return value for EIP-1271 signature validation
+Constants.ERC_6492_MAGIC_VALUE     // Magic value appended to ERC-6492 signatures
+```
+
+## Chain helpers
+
+### Utils.GetChainMetadata
+
+Fetch metadata (native token, RPCs, explorers, stack type, etc.) for a given chain ID. Results are cached in-memory.
+
+```csharp
+ThirdwebChainData data = await Utils.GetChainMetadata(client, chainId);
+```
+
+<Details summary="Parameters">
+
+### client
+
+An initialized `ThirdwebClient`.
+
+### chainId
+
+`BigInteger` chain identifier.
+
+</Details>
+
+<Details summary="Return value">
+
+`ThirdwebChainData` describing the chain.
+
+</Details>
+
+### Utils.IsZkSync
+
+Quickly check if a chain uses zkSync infrastructure. Falls back to chain metadata when the ID is not one of the known zkSync networks.
+
+```csharp
+bool isZkSync = await Utils.IsZkSync(client, chainId);
+```
+
+<Details summary="Parameters">
+
+### client
+
+`ThirdwebClient` used for metadata lookups.
+
+### chainId
+
+`BigInteger` chain identifier.
+
+</Details>
+
+<Details summary="Return value">
+
+`true` if the chain is zkSync-based.
+
+</Details>
+
+## Address & identity helpers
+
+### Utils.ToChecksumAddress
+
+Normalize any hex address to its EIP-55 checksum representation.
+
+```csharp
+string checksum = address.ToChecksumAddress();
+```
+
+### Utils.IsValidAddress
+
+Lightweight validation for EVM addresses.
+
+```csharp
+if (!input.IsValidAddress()) {
+	throw new ArgumentException("Expected an EVM address");
+}
+```
+
+### Utils.GetENSFromAddress / Utils.GetAddressFromENS
+
+Resolve between ENS names and addresses. Lookups are cached per process.
+
+```csharp
+string ens = await Utils.GetENSFromAddress(client, address);
+string addr = await Utils.GetAddressFromENS(client, ensName);
+```
+
+### Utils.GetSocialProfiles
+
+Pull public social metadata (Lens, Farcaster, etc.) for an address or ENS.
+
+```csharp
+SocialProfiles profiles = await Utils.GetSocialProfiles(client, "vitalik.eth");
+```
+
+## Encoding & hashing
+
+### Utils.HexConcat
+
+Join multiple hex strings (with `0x` prefixes) into a single blob.
+
+```csharp
+string callData = Utils.HexConcat("0x1234", "0x5566");
+```
+
+### BytesToHex / HexToBytes
+
+Extension helpers for toggling between byte arrays and hex.
+
+```csharp
+byte[] bytes = hex.HexToBytes();
+string hexAgain = bytes.BytesToHex();
+```
+
+### HexToNumber / NumberToHex
+
+Convert between hex strings and `BigInteger` values.
+
+```csharp
+BigInteger gas = "0x5208".HexToNumber();
+string hexValue = gas.NumberToHex();
+```
+
+### StringToHex / HexToString
+
+Encode or decode UTF-8 strings as hex.
+
+```csharp
+string payload = "Hello".StringToHex();
+string message = payload.HexToString();
+```
+
+### HashPrefixedMessage & HashMessage
+
+Generate Ethereum-style prefixed hashes or raw Keccak hashes.
+
+```csharp
+byte[] prefixed = messageBytes.HashPrefixedMessage();
+string keccak = message.HashMessage();
+```
+
+### Utils.HexToBytes32
+
+Left-pad a hex string so it fits into exactly 32 bytes.
+
+```csharp
+byte[] padded = someHex.HexToBytes32();
+```
+
+### Utils.TrimZeroes
+
+Strip leading zero bytes—handy before ABI encoding.
+
+```csharp
+byte[] trimmed = signature.TrimZeroes();
+```
+
+### Utils.PreprocessTypedDataJson
+
+Stringify large integers inside a typed-data payload before sending it to browsers or wallets.
+
+```csharp
+string normalizedJson = Utils.PreprocessTypedDataJson(rawJson);
+```
+
+### Utils.ToJsonExternalWalletFriendly
+
+Convert strongly typed EIP-712 data structures into wallet-ready JSON.
+
+```csharp
+string json = Utils.ToJsonExternalWalletFriendly(typedData, message);
+```
+
+### Utils.SerializeErc6492Signature
+
+Wrap signatures for ERC-6492 (counterfactual ERC-4337 accounts) with the required magic value.
+
+```csharp
+string wrapped = Utils.SerializeErc6492Signature(factoryAddress, deploymentCalldata, signatureBytes);
+```
+
+## Value & time helpers
+
+### Utils.ToWei / Utils.ToEth / Utils.FormatERC20
+
+Convert between human-readable token amounts and Wei.
+
+```csharp
+string wei = "0.05".ToWei();
+string eth = wei.ToEth(decimalsToDisplay: 6, addCommas: true);
+string usdc = Utils.FormatERC20(usdcRawValue, decimalsToDisplay: 2, decimals: 6);
+```
+
+### Utils.AdjustDecimals
+
+Scale a `BigInteger` between two decimal systems—useful when toggling between token decimals.
+
+```csharp
+BigInteger stableValue = amount.AdjustDecimals(18, 6);
+```
+
+### Utils.GenerateSIWE
+
+Assemble a Sign-In With Ethereum message from a `LoginPayloadData` object. Throws if required fields are missing to help surface misconfigurations early.
+
+```csharp
+string messageToSign = Utils.GenerateSIWE(payload);
+```
+
+### Utils.GetUnixTimeStampNow / Utils.GetUnixTimeStampIn10Years
+
+Timestamp helpers for authentication windows or scheduled expirations.
+
+```csharp
+long now = Utils.GetUnixTimeStampNow();
+long farFuture = Utils.GetUnixTimeStampIn10Years();
+```
+
+### Utils.ReplaceIPFS
+
+Swap `ipfs://` URIs for a gateway of your choice (defaults to the Thirdweb fallback gateway).
+
+```csharp
+string httpUrl = ipfsUri.ReplaceIPFS("https://w3s.link/ipfs/");
+```
+
+## Gas & network costs
+
+### Utils.FetchGasPrice / Utils.FetchGasFees
+
+Retrieve legacy gas prices or EIP-1559 fee suggestions with optional safety bumps. Polygon, Celo, and Arbitrum chains get tailor-made logic.
+
+```csharp
+BigInteger gasPrice = await Utils.FetchGasPrice(client, chainId);
+(BigInteger maxFee, BigInteger maxPriority) = await Utils.FetchGasFees(client, chainId);
+```
+
+### Utils.IsEip155Enforced / Utils.IsEip1559Supported
+
+Runtime checks that tell you whether a chain requires EIP-155 signatures and whether it supports EIP-1559 style fees.
+
+```csharp
+bool needsProtectedTx = await Utils.IsEip155Enforced(client, chainId);
+bool supports1559 = Utils.IsEip1559Supported(chainId.ToString());
+```
+
+## Transactions & monitoring
+
+### Utils.WaitForTransactionReceipt
+
+Poll for a transaction receipt with built-in timeouts from the client's fetch options.
+
+```csharp
+var receipt = await Utils.WaitForTransactionReceipt(client, chainId, txHash);
+```
+
+### Utils.IsDeployed
+
+Check whether bytecode exists at an address.
+
+```csharp
+bool deployed = await Utils.IsDeployed(client, chainId, contractAddress);
+```
+
+### Utils.IsDelegatedAccount
+
+Detect delegated accounts (EIP-7702 style) by comparing on-chain code against the delegation contract.
+
+```csharp
+bool delegated = await Utils.IsDelegatedAccount(client, chainId, address, delegationContract);
+```
+
+## IP & social enrichment
+
+### Utils.PacketToBytes
+
+Encode ENS-style DNS packets. Exposed for advanced ENS tooling; most integrations can rely on the higher-level ENS helpers above.
+
+```csharp
+byte[] packet = Utils.PacketToBytes("subdomain.example.eth");
+```
+

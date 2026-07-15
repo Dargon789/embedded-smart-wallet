@@ -1,0 +1,124 @@
+import { ReactIcon } from "@/icons";
+import { createMetadata } from "@doc";
+import { ArticleIconCard, Stack } from "@doc";
+import { BlocksIcon } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+
+export const metadata = createMetadata({
+	title: "Reading Contract State | thirdweb",
+	description: "How to read contract state in react",
+});
+
+# Read contract state
+
+Read onchain data from any contract on any chain.
+
+
+## Generic Contract Read
+
+Reading contract state in react is done via the `useReadContract` hook. The hook returns a React Query `data`, `isLoading`, and other useful state that you can use to render your component.
+
+```ts
+import { getContract } from "thirdweb";
+import { useReadContract } from "thirdweb/react";
+
+const contract = getContract({
+	client,
+	chain,
+	address: "0x...",
+});
+
+const MyComponent = () => {
+	const { data, isLoading } = useReadContract({
+		contract,
+		method: "function tokenURI(uint256 tokenId) returns (string)",
+		params: [1n],
+	});
+};
+```
+
+## Using Extensions
+
+<Stack>
+<ArticleIconCard
+	title="Understanding Extensions"
+	description="Learn how to use extensions in your project"
+	icon={BlocksIcon}
+	href="/typescript/v5/extensions/use"
+/>
+</Stack>
+
+Extensions are a way to make complex queries from a contract in a type-safe way with a simple API.
+
+```tsx
+import { getContract } from "thirdweb";
+import { useReadContract } from "thirdweb/react";
+import { getOwnedNFTs } from "thirdweb/extensions/erc721";
+
+const contract = getContract({
+	client,
+	chain,
+	address: "0x...",
+});
+
+const MyComponent = () => {
+	const ownedNFTs = useReadContract(getOwnedNFTs, {
+		contract,
+		address: "0x...",
+	});
+};
+```
+
+Check out all the [available extensions](/references/typescript/v5/functions#extensions) for more details.
+
+## Generic Contract Events
+
+Query and listen to contract events with the `useContractEvents` hook.
+
+```tsx
+import { useContractEvents } from "thirdweb/react";
+import { prepareEvent } from "thirdweb";
+
+const myEvent = prepareEvent({
+  signature: "event MyEvent(uint256 myArg)",
+});
+
+const { data: events } = useContractEvents({
+    contract,
+    eventName: [myEvent],
+});
+```
+
+or with extensions:
+
+```tsx
+import { useContractEvents } from "thirdweb/react";
+import { tokensClaimedEvent } from "thirdweb/extensions/erc721";
+
+const { data: events } = useContractEvents({
+    contract,
+	events: [tokensClaimedEvent()]
+});
+```
+
+## API References
+
+Check out the [contract hooks](https://thirdweb.com/docs/references/typescript/v5/useReadContract) reference for more details.
+
+<Stack>
+
+<ArticleIconCard
+	title="useReadContract"
+	icon={ReactIcon}
+	href="/references/typescript/v5/useReadContract"
+	description="Hook to read contract state"
+/>
+
+<ArticleIconCard
+	title="useContractEvents"
+	icon={ReactIcon}
+	href="/references/typescript/v5/useContractEvents"
+	description="Hook to query and listen to contract events"
+/>
+
+</Stack>

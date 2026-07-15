@@ -1,0 +1,40 @@
+import { createMetadata, DocImage, Steps, Step } from "@doc";
+import TeamSettings from './assets/team-settings.png';
+import Credits from './assets/credits-page.png';
+
+export const metadata = createMetadata({
+	title: "thirdweb - Credits",
+	description: "Learn about how credits will be applied to your bill",
+	image: {
+		title: "Credits",
+		icon: "thirdweb",
+	},
+});
+
+# Credits
+
+Credits let you cover the costs of using thirdweb services. There are currently two types of credits available on thirdweb:
+
+- **Optimism Superchain Credits**
+Optimism superchain credits are redeemed from a program which aims to enable developers to create seamless web3 user onboarding experiences powered by Smart Accounts. [Learn more about the OP Superchain program.](https://thirdweb.com/superchain)
+
+- **Service Credits**: These credits can be applied across any thirdweb service on any chain. This includes usage across In-App Wallets, RPC, and IPFS storage. To get thirdweb credits, apply to join the [startup program.](https://thirdweb.com/community/startup-program).
+
+## View Credits
+
+<Steps>
+
+<Step title="Navigate to Settings">
+
+While logged in, navigate to the **Settings** tab in your dashboard and select **Settings**.
+
+<DocImage src={TeamSettings} alt="Team Settings" />
+</Step>
+<Step title="View Credits">
+Select Credits to view your available credits and usage or apply to the OP Superchain program.
+<DocImage src={Credits} alt="Credits dashboard" />
+</Step>
+
+</Steps>
+
+If you have credits, you can use eligible thirdweb services normally without any extra setup. Credits will automatically be applied to your bill at the end of the month.

@@ -1,0 +1,53 @@
+.changelog-page .kg-video-player-container {
+  display: none;
+}
+
+.changelog-page h2 a {
+  text-decoration: none;
+}
+
+.changelog-page a:hover {
+  color: hsl(var(--foreground));
+  text-decoration-color: hsl(var(--foreground));
+  text-decoration-style: solid;
+}
+
+.changelog-page figcaption {
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+}
+
+.changelog-page iframe {
+  width: 100%;
+  margin-block: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1em;
+  overflow: hidden;
+}
+
+.kg-video-container {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding: 1em;
+  margin: 20px 0;
+}
+
+.kg-video-container video {
+  border-radius: var(--radius);
+}
+
+.kg-callout-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  background: hsl(var(--card));
+}
+
+.kg-video-overlay {
+  display: none;
+}

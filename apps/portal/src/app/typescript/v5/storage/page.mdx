@@ -1,0 +1,62 @@
+# IPFS Storage
+
+The thirdweb SDK comes built-in with an IPFS uploader and downloader.
+
+## Download from IPFS
+
+```ts
+import { download } from "thirdweb/storage";
+
+const file = await download({
+	client,
+	uri: "ipfs://Qm...",
+});
+```
+
+You can view all of the configuration options in the [full reference](/references/typescript/v5/download).
+
+## Upload to IPFS
+
+### Uploading JSON objects
+
+```ts
+import { upload } from "thirdweb/storage";
+
+const uris = await upload({
+	client,
+	files: [
+		{
+			name: "something",
+			data: {
+				hello: "world",
+			},
+		},
+	],
+});
+```
+
+### Uploading files
+
+```ts
+import { upload } from "thirdweb/storage";
+
+const uris = await upload({
+	client,
+	files: [new File(["hello world"], "hello.txt")],
+});
+```
+
+You can view all of the configuration options in the [full reference](/references/typescript/v5/upload).
+
+### Resolve IPFS uris
+
+You can easily convert a `ipfs://` uri to a `https://` uri with your own IPFS gateway using the `resolveScheme` function.
+
+The resolved uri will be protected by your api key settings, and only accessible to your whitelisted domains.
+
+```ts
+import { resolveScheme } from "thirdweb/storage";
+
+const uri = await resolveScheme("ipfs://Qm...");
+// resolves to https://<clientId>.ipfscdn.io/Qm...
+```
