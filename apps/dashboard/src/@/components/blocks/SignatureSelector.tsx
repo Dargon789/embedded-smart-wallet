@@ -66,8 +66,7 @@ export function SignatureSelector({
 
   // Check if the current values include custom values (not in options)
   const customValues = useMemo((): string[] => {
-    const uniqueValues = Array.from(new Set(currentValues));
-    return uniqueValues.filter(
+    return currentValues.filter(
       (val): val is string =>
         val !== undefined &&
         val !== null &&

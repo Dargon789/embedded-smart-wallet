@@ -20,7 +20,7 @@ export function DistributionBarChart(props: DistributionBarChartProps) {
     0,
   );
 
-  const invalidTotalPercentage = Math.abs(totalPercentage - 100) > 0.01;
+  const invalidTotalPercentage = totalPercentage !== 100;
 
   return (
     <div>

@@ -20,6 +20,23 @@ type FetchWithKeyOptions = {
 
 const ALLOWED_AI_HOST_URL = new URL(NEXT_PUBLIC_THIRDWEB_AI_HOST);
 
+function sanitizeEndpoint(endpoint: string): string {
+  if (!endpoint.startsWith("/")) {
+    throw new Error("Endpoint must be a relative path starting with '/'");
+  }
+
+  if (endpoint.startsWith("//")) {
+    throw new Error("Protocol-relative endpoints are not allowed");
+  }
+
+  if (endpoint.includes("\\") || endpoint.includes("..")) {
+    throw new Error("Invalid endpoint path");
+  }
+
+  const parsed = new URL(endpoint, "https://sanitizer.local");
+  return `${parsed.pathname}${parsed.search}`;
+}
+
 export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
   const timeout = options.timeout || 30000;
 
@@ -32,23 +49,8 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("No auth token found");
     }
 
-    // Only allow root-relative API endpoints to prevent SSRF via host/scheme override.
-    if (!options.endpoint.startsWith("/")) {
-      throw new Error("Endpoint must be a root-relative path");
-    }
-
-    if (options.endpoint.startsWith("//") || options.endpoint.includes("\\")) {
-      throw new Error("Invalid endpoint format");
-    }
-
-    // Reject path traversal and dot-segments before URL resolution.
-    const endpointPathOnly = options.endpoint.split("?")[0] || "/";
-    const endpointSegments = endpointPathOnly.split("/");
-    if (endpointSegments.some((segment) => segment === "." || segment === "..")) {
-      throw new Error("Invalid endpoint path");
-    }
-
-    const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
+    const safeEndpoint = sanitizeEndpoint(options.endpoint);
+    const endpointUrl = new URL(safeEndpoint, ALLOWED_AI_HOST_URL);
 
     if (
       endpointUrl.protocol !== "http:" &&
@@ -57,15 +59,8 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("Invalid endpoint protocol");
     }
 
-    if (endpointUrl.origin !== ALLOWED_AI_HOST_URL.origin) {
+    if (endpointUrl.hostname !== ALLOWED_AI_HOST_URL.hostname) {
       throw new Error("Endpoint host is not allowed");
-    }
-
-    const allowedBasePath = ALLOWED_AI_HOST_URL.pathname.endsWith("/")
-      ? ALLOWED_AI_HOST_URL.pathname
-      : `${ALLOWED_AI_HOST_URL.pathname}/`;
-    if (!endpointUrl.pathname.startsWith(allowedBasePath)) {
-      throw new Error("Endpoint path escapes allowed base path");
     }
 
     const response = await fetch(endpointUrl.toString(), {
