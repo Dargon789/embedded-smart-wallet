@@ -28,7 +28,6 @@ export const StepsCard: React.FC<StepsCardProps> = ({
   const lastStepCompleted =
     firstIncomplete === -1 ? steps.length - 1 : firstIncomplete - 1;
   const isComplete = firstIncomplete === -1;
-  const isComplete = useMemo(() => firstIncomplete === -1, [firstIncomplete]);
 
   if (steps.length === 0 || isComplete) {
     return null;
