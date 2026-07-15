@@ -99,7 +99,7 @@ export function UpsellBannerCard(props: UpsellBannerCardProps) {
           </div>
         </div>
 
-        {props.cta && "target" in props.cta ? (
+        {props.cta && "link" in props.cta ? (
           <Button
             asChild
             className={cn(
