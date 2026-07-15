@@ -164,11 +164,12 @@ export function TokenSelector(props: {
     : undefined;
 
   // if selected value is not in options, add it
+  const finalOptions = [...options];
   if (
     selectedValue &&
-    !options.find((option) => option.value === selectedValue)
+    !finalOptions.find((option) => option.value === selectedValue)
   ) {
-    options.push({
+    finalOptions.push({
       label: props.selectedToken?.address || "Unknown",
       value: selectedValue,
     });
