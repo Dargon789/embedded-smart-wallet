@@ -32,12 +32,20 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("No auth token found");
     }
 
-    // Disallow absolute URLs in endpoint to prevent overriding the allowed host.
-    if (
-      options.endpoint.startsWith("http://") ||
-      options.endpoint.startsWith("https://")
-    ) {
-      throw new Error("Absolute URLs are not allowed for endpoint");
+    // Only allow root-relative API endpoints to prevent SSRF via host/scheme override.
+    if (!options.endpoint.startsWith("/")) {
+      throw new Error("Endpoint must be a root-relative path");
+    }
+
+    if (options.endpoint.startsWith("//") || options.endpoint.includes("\\")) {
+      throw new Error("Invalid endpoint format");
+    }
+
+    // Reject path traversal and dot-segments before URL resolution.
+    const endpointPathOnly = options.endpoint.split("?")[0] || "/";
+    const endpointSegments = endpointPathOnly.split("/");
+    if (endpointSegments.some((segment) => segment === "." || segment === "..")) {
+      throw new Error("Invalid endpoint path");
     }
 
     const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
@@ -49,13 +57,15 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("Invalid endpoint protocol");
     }
 
-    if (endpointUrl.hostname !== ALLOWED_AI_HOST_URL.hostname) {
+    if (endpointUrl.origin !== ALLOWED_AI_HOST_URL.origin) {
       throw new Error("Endpoint host is not allowed");
     }
 
-    // Ensure the resolved path does not escape the intended base via traversal.
-    if (endpointUrl.pathname.includes("/../") || endpointUrl.pathname.includes("/./")) {
-      throw new Error("Invalid endpoint path");
+    const allowedBasePath = ALLOWED_AI_HOST_URL.pathname.endsWith("/")
+      ? ALLOWED_AI_HOST_URL.pathname
+      : `${ALLOWED_AI_HOST_URL.pathname}/`;
+    if (!endpointUrl.pathname.startsWith(allowedBasePath)) {
+      throw new Error("Endpoint path escapes allowed base path");
     }
 
     const response = await fetch(endpointUrl.toString(), {
