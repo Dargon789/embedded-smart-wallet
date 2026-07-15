@@ -1,0 +1,164 @@
+import { Stack, InstallTabs, Callout, Steps, Step, GithubTemplateCard } from "@doc";
+
+# Adapters
+
+The thirdweb SDK can work side by side with:
+
+- wagmi
+- viem
+- privy
+- ethers.js v5
+- ethers.js v6
+- older versions of the @thirdweb-dev/sdk (using the ethers.js v5 adapter)
+- any other library that conforms to the [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) standard
+
+Adapters allow you to use contracts, providers and wallets from these libraries with the thirdweb SDK and vice versa.
+
+## Wagmi
+
+### Using thirdweb in-app wallets with wagmi
+
+View the demo repo for using thirdweb in-app / smart wallets with wagmi:
+
+<Stack>
+<GithubTemplateCard
+	title="wagmi + thirdweb demo repo"
+	description="A demo repo for using thirdweb in-app / smart wallets with wagmi"
+	href="https://github.com/thirdweb-example/wagmi-inapp-smart-wallets"
+  />
+</Stack>
+
+You can use thirdweb's in-app, ecosystem and smart wallets in your wagmi application by using the `@thirdweb-dev/wagmi-adapter` package.
+
+```shell
+npm install thirdweb @thirdweb-dev/wagmi-adapter
+```
+
+Make sure you're running wagmi 2.14.1 or above.
+
+You probably already have a wagmi config with some connectors, simply add the inAppWalletConnector to the list, along with the desired options.
+
+```ts
+import { http, createConfig } from "wagmi";
+import { inAppWalletConnector } from "@thirdweb-dev/wagmi-adapter";
+import { createThirdwebClient, defineChain as thirdwebChain } from "thirdweb";
+
+const client = createThirdwebClient({
+  clientId: "your-client-id",
+});
+
+export const config = createConfig({
+  chains: [sepolia],
+  connectors: [
+    // add the in-app wallet connector
+    inAppWalletConnector({
+      client,
+      // optional: turn on smart accounts!
+      smartAccounts: {
+        sponsorGas: true,
+        chain: thirdwebChain(sepolia),
+      },
+    }),
+  ],
+  transports: {
+    [sepolia.id]: http(),
+  },
+});
+```
+
+Then in your application, you can use the connector to trigger the in-app wallet connection.
+
+```ts
+const { connect, connectors } = useConnect();
+
+const onClick = () => {
+  // grab the connector
+  const inAppWallet = connectors.find((x) => x.id === "in-app-wallet");
+  // call connect with the desired strategy
+  connect({
+    connector: inAppWallet,
+    strategy: "google",
+  });
+};
+```
+
+### Converting a wagmi wallet client to a thirdweb wallet
+
+You can use the thirdweb SDK within a wagmi application by setting the wagmi connected account as the thirdweb 'active wallet'. After that, you can use all of the react components and hooks normally, including `BuyWidget`, `TransactionButton`, etc.
+
+```ts
+// Assumes you've wrapped your application in a `<ThirdwebProvider>`
+
+import { useEffect } from 'react'
+import { defineChain } from 'thirdweb'
+import { useSetActiveWallet } from 'thirdweb/react'
+import { EIP1193 } from 'thirdweb/wallets'
+import { useDisconnect, useSwitchChain, useWalletClient } from 'wagmi'
+import { client } from './client'
+
+
+const account = useAccount(); // from wagmi
+const setActiveWallet = useSetActiveWallet(); // from thirdweb/react
+
+// whenever the wagmi account changes, 
+// we adapt it to a thirdweb wallet and set it as the active wallet
+  useEffect(() => {
+    const setActive = async () => {
+      if (account?.connector?.getProvider) {
+        const provider = await account?.connector?.getProvider({
+          chainId,
+        });
+        const thirdwebWallet = EIP1193.fromProvider({
+          provider,
+        });
+        await thirdwebWallet.connect({
+          client,
+        });
+        setActiveWallet(thirdwebWallet);
+      }
+    };
+    setActive();
+  }, [account?.connector?.getProvider, setActiveWallet]);
+```
+
+You can view a fully functioning wagmi + thirdweb app in this [github repository](https://github.com/thirdweb-example/wagmi-thirdweb).
+
+## Privy
+
+Similarly, you can use the thirdweb SDK with privy by setting the privy wallet as the thirdweb 'active wallet'. After that, you can use all of the react components, functions and hooks normally, including `BuyWidget`, `TransactionButton`, etc.
+
+```ts
+// Assumes you've wrapped your application in a `<ThirdwebProvider>`
+
+import { useEffect } from 'react'
+import { defineChain } from 'thirdweb'
+import { useSetActiveWallet } from 'thirdweb/react'
+import { EIP1193 } from 'thirdweb/wallets'
+import { ethers5Adapter } from 'thirdweb/adapters/ethers5';
+import { client } from './client'
+import { useWallets } from "@privy-io/react-auth";
+
+
+const { wallets } = useWallets(); // from privy
+const setActiveWallet = useSetActiveWallet(); // from thirdweb/react
+
+// whenever the privy wallet changes, 
+// we adapt it to a thirdweb account and set it as the active wallet
+useEffect(() => {
+    const setActive = async () => {
+        const privyWallet = wallets[0];
+        if (privyWallet) {
+          const ethersProvider = await privyWallet.getEthersProvider();
+            // create a thirdweb wallet with the privy provider
+            const thirdwebWallet = EIP1193.fromProvider({
+                provider: ethersProvider,
+            });
+            await thirdwebWallet.connect({
+                client,
+            });
+            setActiveWallet(thirdwebWallet);
+        }
+    };
+    setActive();
+}, [wallets]);
+```

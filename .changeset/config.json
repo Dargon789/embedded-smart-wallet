@@ -1,0 +1,27 @@
+{
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true,
+    "updateInternalDependents": "always"
+  },
+  "$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
+  "access": "public",
+  "baseBranch": "main",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "thirdweb-dev/js"
+    }
+  ],
+  "commit": false,
+  "ignore": [
+    "playground-web",
+    "thirdweb-dashboard",
+    "wallet-ui",
+    "portal",
+    "nebula-app"
+  ],
+  "snapshot": {
+    "prereleaseTemplate": "{tag}-{commit}-{datetime}"
+  },
+  "updateInternalDependencies": "patch"
+}

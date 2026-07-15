@@ -1,0 +1,41 @@
+import { Details, createMetadata } from "@doc";
+
+export const metadata = createMetadata({
+	title: "IThirdwebWallet.SignAuthorization | Thirdweb .NET SDK",
+	description: "Sign an EIP-7702 Payload to Set Code to your EOA.",
+});
+
+# [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702) Integration (Low-level API)
+Integrates `authorizationList` for any transactions.
+This EIP essentially allows you to set code to an EOA, unlocking a world of possibilities to enhance their functionality.
+An authority may execute its own authorization, the only difference is internal whereby the authorization nonce is incremented by 1.
+
+You almost never need to use this API directly, but it's available for low-level access. Use higher level [Account Abstraction](/dotnet/wallets/providers/account-abstraction) APIs instead.
+
+## Usage
+
+```csharp
+var authorization = await eoaWallet.SignAuthorization(chainId: chainWith7702Support, contractAddress: delegationContractAddress, willSelfExecute: false);
+```
+
+<Details summary="Parameters">
+
+### chainId (required)
+
+Your chain ID as a `BigInteger` value.
+
+### contractAddress (required)
+The address of the contract you want to authorize. Your EOA will essentially become a smart contract if this authorization is executed.
+
+### willSelfExecute (required)
+Whether the authorization will be executed by the EOA itself or by a third-party. It will affect the nonce of the authorization.
+
+</Details>
+
+<Details summary="Return Value">
+
+### string
+
+The method returns an `EIP7702Authorization` object that can be passed to our `ThirdwebTransaction`/`ThirdwebTransactionInput` related APIs and broadcast as such.
+
+</Details>
