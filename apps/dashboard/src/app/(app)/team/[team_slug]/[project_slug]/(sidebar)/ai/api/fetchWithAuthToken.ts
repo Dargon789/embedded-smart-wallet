@@ -20,6 +20,23 @@ type FetchWithKeyOptions = {
 
 const ALLOWED_AI_HOST_URL = new URL(NEXT_PUBLIC_THIRDWEB_AI_HOST);
 
+function sanitizeEndpoint(endpoint: string): string {
+  if (!endpoint.startsWith("/")) {
+    throw new Error("Endpoint must be a relative path starting with '/'");
+  }
+
+  if (endpoint.startsWith("//")) {
+    throw new Error("Protocol-relative endpoints are not allowed");
+  }
+
+  if (endpoint.includes("\\") || endpoint.includes("..")) {
+    throw new Error("Invalid endpoint path");
+  }
+
+  const parsed = new URL(endpoint, "https://sanitizer.local");
+  return `${parsed.pathname}${parsed.search}`;
+}
+
 export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
   const timeout = options.timeout || 30000;
 
@@ -32,7 +49,8 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       throw new Error("No auth token found");
     }
 
-    const endpointUrl = new URL(options.endpoint, ALLOWED_AI_HOST_URL);
+    const safeEndpoint = sanitizeEndpoint(options.endpoint);
+    const endpointUrl = new URL(safeEndpoint, ALLOWED_AI_HOST_URL);
 
     if (
       endpointUrl.protocol !== "http:" &&
