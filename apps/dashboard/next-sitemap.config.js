@@ -126,7 +126,7 @@ async function createSearchRecordSitemaps(config) {
     },
   );
   const data = await response.text();
-  const parsedLines = data.split("\n").map((l) => JSON.parse(l));
+  const parsedLines = data.split("\n").filter(line => line.trim() !== "").map((l) => JSON.parse(l));
   const chainsForLines = await Promise.all(
     parsedLines.map((parsedLine) => {
       return getSingleChain(parsedLine.chain_id)
