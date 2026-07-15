@@ -56,20 +56,14 @@ export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
       rawEndpoint.includes("\\") ||
       rawEndpoint.includes("#") ||
       rawEndpoint.startsWith("http://") ||
-      rawEndpoint.startsWith("https://")
-    ) {
-      throw new Error("Invalid endpoint format");
-    }
-
-    const [pathOnly] = rawEndpoint.split("?");
-    const segments = pathOnly.split("/");
-    if (segments.some((segment) => segment === "." || segment === "..")) {
-      throw new Error("Invalid endpoint path");
-    }
+    const endpointUrl = new URL(rawEndpoint, ALLOWED_AI_HOST_URL);
+    if (endpointUrl.origin !== ALLOWED_AI_HOST_URL.origin) {
 
     const endpointUrl = new URL(rawEndpoint, ALLOWED_AI_HOST_URL.origin);
 
-    if (
+    const trustedRequestUrl = `${ALLOWED_AI_HOST_URL.origin}${endpointUrl.pathname}${endpointUrl.search}`;
+
+    const response = await fetch(trustedRequestUrl, {
       endpointUrl.protocol !== "http:" &&
       endpointUrl.protocol !== "https:"
     ) {
