@@ -60,7 +60,7 @@ export function RenderSidebarLinks(props: { links: SidebarLink[] }) {
         }
 
         if ("separator" in link) {
-          return <Separator className="my-2" />;
+          return <Separator className="my-2" key={`separator-${i}`} />;
         }
 
         const isExternal = link.href.startsWith("http");
