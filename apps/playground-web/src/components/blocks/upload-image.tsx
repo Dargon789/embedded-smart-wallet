@@ -1,8 +1,27 @@
 "use client";
 
 import { UploadIcon } from "lucide-react";
-import { type ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+
+const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+]);
+
+const ALLOWED_IMAGE_EXTENSIONS = /\.(png|jpe?g|webp|gif)$/i;
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+
+function isValidImageFile(file: File) {
+  const hasAllowedMimeType = ALLOWED_IMAGE_MIME_TYPES.has(file.type.toLowerCase());
+  const hasAllowedExtension = ALLOWED_IMAGE_EXTENSIONS.test(file.name);
+  const hasAllowedSize = file.size > 0 && file.size <= MAX_IMAGE_SIZE_BYTES;
+
+  return hasAllowedMimeType && hasAllowedExtension && hasAllowedSize;
+}
 
 export function UploadImage(props: {
   onImageUpload?: (file: File) => void;
@@ -13,6 +32,12 @@ export function UploadImage(props: {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
   const handleClick = () => {
     fileInputRef.current?.click();
   };
@@ -21,22 +46,18 @@ export function UploadImage(props: {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate the file type
-    if (!file.type.startsWith("image/")) {
+    if (!isValidImageFile(file)) {
       return;
     }
 
-    // Create a preview URL for the image
     const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
 
-    // Call the callback if provided
+    setPreview((previousPreview) => {
+      if (previousPreview) URL.revokeObjectURL(previousPreview);
+      return objectUrl;
+    });
+
     props.onImageUpload?.(file);
-
-    // Clean up the previous preview URL to avoid memory leaks
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
   };
 
   return (
