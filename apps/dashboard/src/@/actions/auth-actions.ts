@@ -144,7 +144,7 @@ export async function doLogin(
       httpOnly: true,
       // 3 days
       maxAge: 3 * 24 * 60 * 60,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: true,
     },
   );
