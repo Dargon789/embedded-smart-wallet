@@ -42,13 +42,19 @@ type AuditLogApiResponse = {
   hasMore: boolean;
 };
 
+const TEAM_SLUG_REGEX = /^[a-zA-Z0-9-]{1,64}$/;
+
 export async function getAuditLogs(teamSlug: string, cursor?: string) {
   const authToken = await getAuthToken();
   if (!authToken) {
     throw new Error("No auth token found");
   }
+  if (!TEAM_SLUG_REGEX.test(teamSlug)) {
+    throw new Error("Invalid team slug");
+  }
+  const safeTeamSlug = encodeURIComponent(teamSlug);
   const url = new URL(
-    `/v1/teams/${teamSlug}/audit-log`,
+    `/v1/teams/${safeTeamSlug}/audit-log`,
     NEXT_PUBLIC_THIRDWEB_API_HOST,
   );
   if (cursor) {
