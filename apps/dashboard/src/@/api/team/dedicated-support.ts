@@ -13,9 +13,15 @@ export async function createDedicatedSupportChannel(
     return { error: "Unauthorized" };
   }
 
+  // Restrict untrusted input to an expected team id/slug character set.
+  if (!/^[A-Za-z0-9_-]+$/.test(teamIdOrSlug)) {
+    return { error: "Invalid team identifier." };
+  }
+  const safeTeamIdOrSlug = encodeURIComponent(teamIdOrSlug);
+
   const res = await fetch(
     new URL(
-      `/v1/teams/${teamIdOrSlug}/dedicated-support-channel`,
+      `/v1/teams/${safeTeamIdOrSlug}/dedicated-support-channel`,
       NEXT_PUBLIC_THIRDWEB_API_HOST,
     ),
     {
