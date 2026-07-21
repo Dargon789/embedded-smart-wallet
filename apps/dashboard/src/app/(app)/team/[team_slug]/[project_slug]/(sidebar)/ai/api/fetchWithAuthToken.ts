@@ -21,7 +21,23 @@ type FetchWithKeyOptions = {
 const ALLOWED_AI_HOST_URL = new URL(NEXT_PUBLIC_THIRDWEB_AI_HOST);
 
 export async function fetchWithAuthToken(options: FetchWithKeyOptions) {
-  const timeout = options.timeout || 30000;
+  const DEFAULT_TIMEOUT_MS = 30000;
+  const MIN_TIMEOUT_MS = 1;
+  const MAX_TIMEOUT_MS = 120000;
+
+  const requestedTimeout = options.timeout;
+  const timeout =
+    requestedTimeout === undefined ? DEFAULT_TIMEOUT_MS : requestedTimeout;
+
+  if (
+    !Number.isFinite(timeout) ||
+    timeout < MIN_TIMEOUT_MS ||
+    timeout > MAX_TIMEOUT_MS
+  ) {
+    throw new Error(
+      `Invalid timeout. Must be between ${MIN_TIMEOUT_MS} and ${MAX_TIMEOUT_MS} milliseconds.`,
+    );
+  }
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
