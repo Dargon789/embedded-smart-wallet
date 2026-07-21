@@ -4,6 +4,16 @@ import "server-only";
 import { getAuthToken } from "@/api/auth-token";
 import { NEXT_PUBLIC_THIRDWEB_API_HOST } from "@/constants/public-envs";
 
+const TEAM_ID_OR_SLUG_REGEX = /^[A-Za-z0-9_-]+$/;
+
+function getVerifiedDomainUrl(teamIdOrSlug: string): string {
+  if (!TEAM_ID_OR_SLUG_REGEX.test(teamIdOrSlug)) {
+    throw new Error("Invalid team identifier");
+  }
+
+  return `${NEXT_PUBLIC_THIRDWEB_API_HOST}/v1/teams/${encodeURIComponent(teamIdOrSlug)}/verified-domain`;
+}
+
 function toSafeTeamPathSegment(teamIdOrSlug: string): string | null {
   // Allow typical team IDs/slugs only; reject path/control characters.
   if (!/^[a-zA-Z0-9_-]{1,128}$/.test(teamIdOrSlug)) {
@@ -26,14 +36,11 @@ export type VerifiedDomainResponse =
       verifiedAt: Date;
     };
 
-export async function checkDomainVerification(
-  teamIdOrSlug: string,
-): Promise<VerifiedDomainResponse | null> {
-  const token = await getAuthToken();
-
-  if (!token) {
+  const res = await fetch(getVerifiedDomainUrl(teamIdOrSlug), {
+    headers: {
+      Authorization: `Bearer ${token}`,
     return null;
-  }
+  });
 
   const safeTeamIdOrSlug = toSafeTeamPathSegment(teamIdOrSlug);
   if (!safeTeamIdOrSlug) {
@@ -53,17 +60,14 @@ export async function checkDomainVerification(
   }
 
   return null;
-}
-
-export async function createDomainVerification(
-  teamIdOrSlug: string,
-  domain: string,
-): Promise<VerifiedDomainResponse | { error: string }> {
-  const token = await getAuthToken();
-
-  if (!token) {
+  const res = await fetch(getVerifiedDomainUrl(teamIdOrSlug), {
+    body: JSON.stringify({ domain }),
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     return {
-      error: "Unauthorized",
+    method: "POST",
+  });
     };
   }
 
