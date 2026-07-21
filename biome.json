@@ -1,0 +1,41 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "off",
+        "useSortedKeys": "off"
+      }
+    },
+    "enabled": true
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "correctness": {
+        "noUnusedImports": "error"
+      },
+      "performance": {
+        "noImgElement": "off"
+      },
+      "recommended": true
+    }
+  },
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": ["package.json"]
+    }
+  ]
+}

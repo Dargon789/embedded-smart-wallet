@@ -1,0 +1,19 @@
+# PRs with these paths will be labeled with the following labels
+dashboard:
+  - changed-files:
+    - any-glob-to-any-file: "apps/dashboard/**/*"
+playground:
+  - changed-files:
+    - any-glob-to-any-file: "apps/playground-web/**/*"
+packages:
+  - changed-files:
+    - any-glob-to-any-file: "packages/**/*"
+sdk:
+  - changed-files:
+    - any-glob-to-any-file: "packages/thirdweb/**/*"
+portal:
+  - changed-files:
+    - any-glob-to-any-file: "apps/portal/**/*"
+"Ecosystem Portal":
+  - changed-files:
+    - any-glob-to-any-file: "apps/wallet-ui/**/*"

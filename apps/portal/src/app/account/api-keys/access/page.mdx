@@ -1,0 +1,51 @@
+import { DocImage, Steps, Step } from "@doc";
+import allowedDomainsImage from "../assets/allowed-domains.png";
+import { createMetadata } from "@doc";
+import AccessRestrictions from "./assets/access-restrictions.png";
+import ProjectOverview from "../assets/project-overview.png";
+
+export const metadata = createMetadata({
+	title: "Access Restrictions",
+	description: "Set access restrictions on API keys",
+	image: {
+		title: "Access Restrictions on API Keys",
+		icon: "thirdweb",
+	},
+});
+
+# Access Restrictions
+
+API Keys provide two forms of access restrictions:
+
+- Domain IDs: A domain ID is used to restrict access to the enabled thirdweb infrastructure services based on a specific domain. It serves as an identifier for websites.
+- Bundle IDs: A bundle ID is a unique identifier used to restrict the Client ID to your Unity native or mobile application.
+
+To modify the allowed Domain Id or Bundle Ids:
+
+<Steps>
+
+<Steps>
+
+<Step title="Select Project">
+
+Select the project you want to set access restrictions on from the Overview section of your dashboard.
+
+<DocImage src={ProjectOverview} alt="Project Overview" />
+
+</Step>
+
+<Step title="Project Settings">
+
+Navigate to the project's settings and locate Domain Restrictions and Bundle ID restrictions. Add the domain or bundle id you want to restrict the project on.
+
+<DocImage src={AccessRestrictions} alt="" />
+
+</Step>
+
+<Step title="Save Changes">
+Save your changes to apply the access restrictions.
+</Step>
+
+</Steps>
+
+</Steps>
